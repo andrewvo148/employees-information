@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LaptopOutlined, NotificationOutlined , HomeOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { ConfigProvider, MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
+import { usePathname, useRouter } from 'next/navigation'
 
 import theme from "../themeConfig";
+import Link from 'next/link';
 
 const { Header, Content, Sider } = Layout;
 
@@ -27,31 +29,44 @@ const items1: MenuProps['items'] = [
   },
 ];
 
-const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-  (icon, index) => {
-    const key = String(index + 1);
-
-    return {
-      key: `sub${key}`,
-      icon: React.createElement(icon),
-      label: `subnav ${key}`,
-
-      children: new Array(4).fill(null).map((_, j) => {
-        const subKey = index * 4 + j + 1;
-        return {
-          key: subKey,
-          label: `option${subKey}`,
-        };
-      }),
-    };
+const items2: MenuProps['items'] = [
+  {
+    key: '/tasks',
+    label: 'Tổng quan',
+    icon: <HomeOutlined style={{ color: '#ffffff' }} />, // Icon for Home
   },
-);
+  {
+    key: '/tasks/profile',
+    label: 'Hồ sơ',
+    icon: <UserOutlined style={{ color: '#ffffff' }}/>, // Icon for User
+  },
+  {
+    key: '/tasks/contract',
+    label: 'Hợp đồng',
+    icon: <SettingOutlined style={{ color: '#ffffff' }} />, // Icon for Settings
+  },
+];
 
 function TasksLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const [defaultSelectedKey2, setDefaultSelectedKey2] = useState('')
+
+  useEffect(() => {
+    console.log("Current Pathname:", pathname);
+    // Logic to set the default selected key based on the current pathname
+    console.log("Selected Key:", pathname);
+    setDefaultSelectedKey2(pathname);
+  }, [pathname]);
+
+ 
+
 
     return (
         <ConfigProvider theme={theme}>
@@ -68,7 +83,8 @@ function TasksLayout({
                     theme='dark'
                     className='justify-end flex-row items-cent'
                     mode="horizontal"
-                    defaultSelectedKeys={['2']}
+                    defaultSelectedKeys={['']}
+
                     items={items1}
                     style={{ 
                         flex: 1, 
@@ -83,10 +99,11 @@ function TasksLayout({
                 <Sider width={200} style={{ background: 'colorPrimary' }}>
                     <Menu
                         mode="inline"
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
+                        selectedKeys={[defaultSelectedKey2]}
                         style={{ height: '100%', borderRight: 0 }}
-                        items={items2} />
+                        items={items2} 
+                        onClick={({key}) => router.push(key)}
+                        />
                 </Sider>
                 <Layout style={{ padding: '0 24px 24px' }}>
                     <Breadcrumb style={{ margin: '16px 0' }}>
