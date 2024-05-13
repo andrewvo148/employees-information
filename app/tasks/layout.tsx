@@ -1,27 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { LaptopOutlined, NotificationOutlined , HomeOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { FileTextOutlined, HomeOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { ConfigProvider, MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import { usePathname, useRouter } from 'next/navigation'
 
 import theme from "../themeConfig";
-import Link from 'next/link';
 
 const { Header, Content, Sider } = Layout;
 
 const items1: MenuProps['items'] = [
-  {
-    key: '1',
-    label: 'Home',
-    icon: <HomeOutlined style={{ color: '#ffffff' }} />, // Icon for Home
-  },
-  {
-    key: '2',
-    label: 'User',
-    icon: <UserOutlined style={{ color: '#ffffff' }}/>, // Icon for User
-  },
+    
   {
     key: '3',
     label: 'Settings',
@@ -33,17 +23,17 @@ const items2: MenuProps['items'] = [
   {
     key: '/tasks',
     label: 'Tổng quan',
-    icon: <HomeOutlined style={{ color: '#ffffff' }} />, // Icon for Home
+    icon: <HomeOutlined style={{ color: '#605E5C' }} />, // Icon for Home
   },
   {
     key: '/tasks/profile',
     label: 'Hồ sơ',
-    icon: <UserOutlined style={{ color: '#ffffff' }}/>, // Icon for User
+    icon: <UserOutlined style={{ color: '#605E5C' }}/>, // Icon for User
   },
   {
     key: '/tasks/contract',
     label: 'Hợp đồng',
-    icon: <SettingOutlined style={{ color: '#ffffff' }} />, // Icon for Settings
+    icon: <FileTextOutlined style={{ color: '#605E5C' }} />, // Icon for Settings
   },
 ];
 
@@ -62,10 +52,12 @@ function TasksLayout({
     console.log("Current Pathname:", pathname);
     // Logic to set the default selected key based on the current pathname
     console.log("Selected Key:", pathname);
-    setDefaultSelectedKey2(pathname);
+    if ("/tasks/profile/create" === pathname) {
+      setDefaultSelectedKey2("/tasks/profile") 
+    } else {
+      setDefaultSelectedKey2(pathname);
+    }
   }, [pathname]);
-
- 
 
 
     return (
@@ -106,11 +98,7 @@ function TasksLayout({
                         />
                 </Sider>
                 <Layout style={{ padding: '0 24px 24px' }}>
-                    <Breadcrumb style={{ margin: '16px 0' }}>
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item>List</Breadcrumb.Item>
-                        <Breadcrumb.Item>App</Breadcrumb.Item>
-                    </Breadcrumb>
+                   
                     <Content
                         style={{
                             padding: 24,
