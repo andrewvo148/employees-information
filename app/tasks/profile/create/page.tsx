@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Segmented, Table, Tabs } from "antd";
+import { Modal, Segmented, Table, Tabs } from "antd";
 import type { TableColumnsType, TableProps, TabsProps } from "antd";
 import { Col, Divider, Row } from "antd";
 import moment from 'moment';
@@ -38,15 +38,38 @@ interface DepartmentType {
   name: string;
 }
 
+interface EmployeeType {
+  id: number;
+  employeeCode:          String;  
+  contractType:         String;
+  employeeStatus:        String;
+  firstName:             String;
+  lastName:              String;
+  fullName:              String;
+  // gender                String?
+  // hireDate              String?
+  // salaryBasic           Int?
+  // salarySocialInsurance Int?
+  // receiveDate           DateTime?
+  // mobile                String?
+  // officeEmail           String?
+  // birthDay              DateTime?
+  // birthPlace String?
 
+  // bankAccountNo String?
+  // bankName String?
+
+
+}
 const dateFormat = 'DD/MM/YYYY';
 function ProfileCreatePage() {
-
+  const router = useRouter();
  const searchParams = useSearchParams()
 
   const employeeId = searchParams.get('id');
 
   const [form] = Form.useForm();
+  const [employee, setEmployee] = useState<EmployeeType>(null)
   const [provinces, setProvinces] = useState<ProvinceType[]>([]);
   const [departments, setDepartments] = useState<DepartmentType[]>([]);
 
@@ -54,7 +77,7 @@ function ProfileCreatePage() {
 
 
   const fetchProvinces = () => {
-    fetch("http://localhost:3000/api/provinces")
+    fetch("/api/provinces")
       .then((res) => res.json())
       .then((result) => {
         console.log(result);
@@ -64,7 +87,7 @@ function ProfileCreatePage() {
   };
 
   const fetchDepartments = () => {
-    fetch("http://localhost:3000/api/departments")
+    fetch("/api/departments")
       .then((res) => res.json())
       .then((result) => {
         console.log(result);
@@ -74,13 +97,14 @@ function ProfileCreatePage() {
   };
 
   const fetchEmployeeById = () => {
-    fetch(`http://localhost:3000/api/employees/${employeeId}`)
+    fetch(`/api/employees/${employeeId}`)
     .then((res) => res.json())
     .then(({employee}) => {
       console.log(employee);
       employee.birthDay = moment(employee.birthDay)
       console.log(employee)
-      form.setFieldsValue(employee)
+      setEmployee(employee);
+     form.setFieldsValue(employee)
     })
     .catch((error) => console.error("Error fetching departments:", error));
 
@@ -105,25 +129,77 @@ function ProfileCreatePage() {
     console.log('Received values of form: ', values);
     try {
         const body = { ...values };
-        await fetch('http://localhost:3000/api/employees', {
+        await fetch('/api/employees', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
+        router.push("/tasks/profile")
        // await Router.push('/drafts');
       } catch (error) {
         console.error(error);
+        throw error; // Re-throwing the error
+
       }
   };
 
+    const onCancle =  () => {
+      //form.resetFields()
+      //onFinish(form.getFieldsValue())
+      setIsModalOpen(true);
+
+     
+    };
 
   const firstName = Form.useWatch('firstName', form);
   const lastName = Form.useWatch('lastName', form);
   
   form.setFieldValue('fullName', ((lastName || '') + ' ' + (firstName || '')).trim());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    try {
+      onFinish(form.getFieldsValue())
+      //setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+     
+  };
+
+  const handleBack = () => {
+    setIsModalOpen(false);
+    router.push("/tasks/profile")
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div>
+       <Modal title="Thông báo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
+       
+       footer={[
+          <Button key="back" onClick={handleCancel}>
+            Huỷ
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleBack}>
+            Không lưu
+          </Button>,
+          <Button
+            key="save"
+            onClick={handleOk}
+          >
+            Lưu
+          </Button>,
+        ]}>
+        <p>Bạn có muốn lưu lại các thông tin vừa nhập không?</p>
+      </Modal>
     <Form
           form={form}
           labelCol={{ span: 8 }}
@@ -133,6 +209,7 @@ function ProfileCreatePage() {
           labelWrap={true}
           colon={false}
           style={{}}
+          initialValues={employee}
           onFinish={onFinish}
         >
           <Form.Item label="employeeId" name="id" noStyle>
@@ -141,16 +218,13 @@ function ProfileCreatePage() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Thêm hồ sơ</h2>
         <div className="flex space-x-2">
-        <Button className="" style={{ padding: '8px 24px',
+        <Button className="" onClick={onCancle}
+         style={{ padding: '8px 24px', 
         height: "auto"}}>Huỷ
         </Button>
         <Button 
           type="primary" htmlType="submit" style={{ padding: '8px 24px', height: "auto"}}>
           Lưu
-        </Button>
-        <Button 
-          type="primary" htmlType="submit" style={{ padding: '8px 24px', height: "auto"}}>
-          Lưu và Thoát
         </Button>
         </div>
        

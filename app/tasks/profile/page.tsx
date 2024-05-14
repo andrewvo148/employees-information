@@ -31,6 +31,7 @@ interface TableParams {
 
 const columns: TableColumnsType<DataType> = [
   {
+    key: "1",
     title: "Mã nhân viên",
     dataIndex: "employeeCode",
     sorter: true,
@@ -42,6 +43,7 @@ const columns: TableColumnsType<DataType> = [
   },
 
   {
+    key: "2",
     title: "Họ và tên",
     dataIndex: "fullName",
     width: '200px',
@@ -50,6 +52,7 @@ const columns: TableColumnsType<DataType> = [
   },
 
   {
+    key: "3",
     title: "Giới tính",
     dataIndex: "gender",
     width: '200px',
@@ -60,6 +63,7 @@ const columns: TableColumnsType<DataType> = [
   },
 
   {
+    key: "4",
     title: "Ngày sinh",
     dataIndex: "birthDay",
     width: '200px',
@@ -70,6 +74,7 @@ const columns: TableColumnsType<DataType> = [
   },
 
   {
+    key: "5",
     title: "ĐT di động",
     dataIndex: "mobile",
     width: '200px',
@@ -78,30 +83,17 @@ const columns: TableColumnsType<DataType> = [
   },
 
   {
+    key: "6",
     title: "Email cơ quan",
     dataIndex: "officeEmail",
     width: '200px',
 
   },
   
- 
 
 ];
 
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  getCheckboxProps: (record: DataType) => ({
-    disabled: record.name === "Disabled User", // Column configuration not to be checked
-    name: record.name,
-  }),
-};
+
 
 function ProfilePage() {
   const [data, setData] = useState<DataType[]>();
@@ -115,7 +107,7 @@ function ProfilePage() {
 
   const fetchData = () => {
     setLoading(true);
-    fetch(`http://localhost:3000/api/employees`)
+    fetch(`/api/employees`)
       .then((res) => res.json())
       .then(({ total, employees }) => {
         setData(employees);
@@ -149,6 +141,19 @@ function ProfilePage() {
     }
   };
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
   return (
     <div>
       <div className="flex justify-end mb-2">
@@ -164,13 +169,10 @@ function ProfilePage() {
       </div>
       <div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
         <Table
-          rowSelection={{
-            type: "checkbox",
-            ...rowSelection,
-          }}
+          rowSelection={rowSelection}
           scroll={{x: "max-content", y: "calc(100vh - 300px)" }}
           columns={columns}
-          //   rowKey={(record) => record.login.uuid}
+             rowKey={(record) => record.key}
           dataSource={data}
           pagination={tableParams.pagination}
           loading={loading}
