@@ -48,16 +48,28 @@ model Employee {
   fullName              String?
   gender                String?
   hireDate              String?
+  identifyNumber        String?
+  identifyNumberIssuedDate DateTime?
+  identifyNumberExpiredDate DateTime?
+  identifyNumberIssuedPlace String?
+
+
+  salaryProbationary    Int?
   salaryBasic           Int?
   salarySocialInsurance Int?
   receiveDate           DateTime?
-  mobile                String?
+  mobilePhone           String?
+  officePhone           String?
+  homePhone             String?
   officeEmail           String?
+  otherEmail            String?
   birthDay              DateTime?
   birthPlace String?
 
   bankAccountNo String?
   bankName String?
+
+
 
   department     Department? @relation(fields: [departmentId], references: [id])
   departmentId   Int?

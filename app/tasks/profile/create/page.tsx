@@ -312,6 +312,7 @@ function ProfileCreatePage() {
               </Row>
             </div>
 
+
             <div className="p-5">
               <h4 className="font-bold pb-8">CMND/Thẻ căn cước/Hộ chiếu</h4>
               <Row>
@@ -323,14 +324,14 @@ function ProfileCreatePage() {
                     </Select>
                   </Form.Item>
 
-                  <Form.Item label="Số CMND/CCCD">
+                  <Form.Item label="Số CMND/CCCD" name="identifyNumber">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Ngày cấp (CMND/CCCD)">
+                  <Form.Item label="Ngày cấp (CMND/CCCD)" name="identifyNumberIssuedDate">
                     <DatePicker format={dateFormat} />
                   </Form.Item>
 
-                  <Form.Item label="Nơi cấp (CMND/CCCD)">
+                  <Form.Item label="Nơi cấp (CMND/CCCD)" name="identifyNumberIssuedPlace">
                     <Select>
                       {provinces.map((province) => (
                         <Select.Option value={province.id}>
@@ -341,11 +342,11 @@ function ProfileCreatePage() {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label=" Ngày hết hạn CMND/CCCD">
+                  <Form.Item label=" Ngày hết hạn CMND/CCCD" name="identifyNumberExpiredDate">
                     <DatePicker format={dateFormat}/>
                   </Form.Item>
 
-                  <Form.Item label="Nơi sinh">
+                  <Form.Item label="Nơi sinh" name="birthPlace">
                     <Input />
                   </Form.Item>
                   <Form.Item label="Nguyên quán">
@@ -385,6 +386,10 @@ function ProfileCreatePage() {
             </div>
           </div>
 
+
+
+
+
           <div>
             <div>
               <h2 className="text-xl font-semibold mb-3">Thông tin liên hệ</h2>
@@ -394,21 +399,21 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Số điện thoại/Email/khác</h4>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="ĐT di động">
+                  <Form.Item label="ĐT di động" name="mobilePhone">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="ĐT cơ quan">
+                  <Form.Item label="ĐT cơ quan" name="officePhone">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="ĐT nhà riêng">
+                  <Form.Item label="ĐT nhà riêng" name="homePhone">
                     <Input />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Email cơ quan">
+                  <Form.Item label="Email cơ quan" name="officeEmail">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Email cá nhân">
+                  <Form.Item label="Email cá nhân" name="otherEmail">
                     <Input />
                   </Form.Item>
                 </Col>
@@ -519,11 +524,16 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Thông tin lương</h4>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Lương cơ bản">
+
+                <Form.Item label="Lương cơ bản" name="salaryProbationary">
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
 
-                  <Form.Item label="Lương đóng BH">
+                  <Form.Item label="Lương cơ bản" name="salaryBasic">
+                    <InputNumber style={{ width: "100%" }} />
+                  </Form.Item>
+
+                  <Form.Item label="Lương đóng BH" name="salarySocialInsurance">
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
 
@@ -531,12 +541,14 @@ function ProfileCreatePage() {
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
+
+
                 <Col span={12}>
-                  <Form.Item label="Tk ngân hàng">
+                  <Form.Item label="TK ngân hàng" name="bankAccountNo">
                     <Input />
                   </Form.Item>
 
-                  <Form.Item label="Ngân hàng">
+                  <Form.Item label="Ngân hàng" name="bankName">
                     <Input />
                   </Form.Item>
                 </Col>
