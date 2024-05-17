@@ -75,3 +75,21 @@ model Employee {
   departmentId   Int?
   departmentName String?
 }
+
+
+OrganizationUnitName
+
+model laborNature {
+  id Int       @id @default(autoincrement())
+  name          String
+}
+
+model jobPosition {
+  id Int       @id @default(autoincrement())
+  name          String
+}
+
+model contractType {
+   id Int       @id @default(autoincrement())
+  name          String
+}

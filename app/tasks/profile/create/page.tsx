@@ -27,6 +27,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from 'next/navigation'
 
+const { Option } = Select;
 
 interface ProvinceType {
   id: string;
@@ -258,8 +259,8 @@ function ProfileCreatePage() {
 
                   <Form.Item label="Giới tính" name="gender">
                     <Select>
-                      <Select.Option value="male">Nam</Select.Option>
-                      <Select.Option value="female">Nữ</Select.Option>
+                          <Option value="male">Nam</Option>
+                          <Option value="female">Nữ</Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="Ngày sinh" name="birthDay">
@@ -275,11 +276,11 @@ function ProfileCreatePage() {
                 <Col span={12}>
                   <Form.Item label="Tình trạng hôn nhân">
                     <Select>
-                      <Select.Option value="single">Độc thân</Select.Option>
-                      <Select.Option value="married">
+                      <Option value="single">Độc thân</Option>
+                      <Option value="married">
                         Đã có gia đình
-                      </Select.Option>
-                      <Select.Option value="divorced">Ly dị</Select.Option>
+                      </Option>
+                      <Option value="divorced">Ly dị</Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="MST cá nhân">
@@ -287,25 +288,25 @@ function ProfileCreatePage() {
                   </Form.Item>
                   <Form.Item label="Dân tộc">
                     <Select>
-                      <Select.Option value="male">Kinh</Select.Option>
-                      <Select.Option value="female">Chăm</Select.Option>
+                      <Option value="male">Kinh</Option>
+                      <Option value="female">Chăm</Option>
                     </Select>
                   </Form.Item>
 
                   <Form.Item label="Tôn giáo">
                     <Select>
-                      <Select.Option value="male">Không</Select.Option>
-                      <Select.Option value="female">Hồi giáo</Select.Option>
-                      <Select.Option value="female">Phật giáo</Select.Option>
-                      <Select.Option value="female">
+                      <Option value="male">Không</Option>
+                      <Option value="female">Hồi giáo</Option>
+                      <Option value="female">Phật giáo</Option>
+                      <Option value="female">
                         Thiên chúa giáo
-                      </Select.Option>
+                      </Option>
                     </Select>
                   </Form.Item>
 
                   <Form.Item label="Quốc tịch">
                     <Select>
-                      <Select.Option value="vn">Việt nam</Select.Option>
+                      <Option value="vn">Việt nam</Option>
                     </Select>
                   </Form.Item>
                 </Col>
@@ -319,8 +320,8 @@ function ProfileCreatePage() {
                 <Col span={12}>
                   <Form.Item label="Loại giấy tờ">
                     <Select>
-                      <Select.Option value="cmnd">CMND</Select.Option>
-                      <Select.Option value="cccd">CCCD</Select.Option>
+                      <Option value="cmnd">CMND</Option>
+                      <Option value="cccd">CCCD</Option>
                     </Select>
                   </Form.Item>
 
@@ -334,9 +335,9 @@ function ProfileCreatePage() {
                   <Form.Item label="Nơi cấp (CMND/CCCD)" name="identifyNumberIssuedPlace">
                     <Select>
                       {provinces.map((province) => (
-                        <Select.Option value={province.id}>
+                        <Option value={province.id}>
                           {province.displayName}
-                        </Select.Option>
+                        </Option>
                       ))}
                     </Select>
                   </Form.Item>
@@ -362,8 +363,8 @@ function ProfileCreatePage() {
                 <Col span={12}>
                   <Form.Item label="Trình độ đào tạo">
                     <Select>
-                      <Select.Option value="daihoc">Đại học</Select.Option>
-                      <Select.Option value="caodang">Cao đẳng</Select.Option>
+                      <Option value="daihoc">Đại học</Option>
+                      <Option value="caodang">Cao đẳng</Option>
                     </Select>
                   </Form.Item>
 
@@ -438,54 +439,54 @@ function ProfileCreatePage() {
                   <Form.Item label="Phòng ban">
                     <Select>
                       {departments.map((department) => (
-                        <Select.Option value={department.id}>
+                        <Option value={department.id}>
                           {department.name}
-                        </Select.Option>
+                        </Option>
                       ))}
                     </Select>
                   </Form.Item>
 
                   <Form.Item label="Trạng thái lao động">
                     <Select>
-                      <Select.Option value="cmnd">Đang làm việc</Select.Option>
-                      <Select.Option value="cccd">Đã nghỉ việc</Select.Option>
+                      <Option value="cmnd">Đang làm việc</Option>
+                      <Option value="cccd">Đã nghỉ việc</Option>
                     </Select>
                   </Form.Item>
 
                   <Form.Item label="Tính chất lao động">
                     <Select>
-                      <Select.Option value="cmnd">Thực tập sinh</Select.Option>
-                      <Select.Option value="cccd">Học việc</Select.Option>
-                      <Select.Option value="cccd">Thử việc</Select.Option>
-                      <Select.Option value="cccd">Chính thức</Select.Option>
-                      <Select.Option value="cccd">
+                      <Option value="cmnd">Thực tập sinh</Option>
+                      <Option value="cccd">Học việc</Option>
+                      <Option value="cccd">Thử việc</Option>
+                      <Option value="cccd">Chính thức</Option>
+                      <Option value="cccd">
                         Tạm đình chỉ công việc
-                      </Select.Option>
-                      <Select.Option value="cccd">Nghỉ thai sản</Select.Option>
-                      <Select.Option value="cccd">
+                      </Option>
+                      <Option value="cccd">Nghỉ thai sản</Option>
+                      <Option value="cccd">
                         Đang làm thủ tục nghỉ việc
-                      </Select.Option>
-                      <Select.Option value="cccd">Khác</Select.Option>
+                      </Option>
+                      <Option value="cccd">Khác</Option>
                     </Select>
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Loại hợp đồng">
                     <Select>
-                      <Select.Option value="cmnd">Thử việc</Select.Option>
-                      <Select.Option value="cccd">
+                      <Option value="cmnd">Thử việc</Option>
+                      <Option value="cccd">
                         Hợp đồng xác định thời hạn
-                      </Select.Option>
-                      <Select.Option value="cccd">
+                      </Option>
+                      <Option value="cccd">
                         Hợp đồng không xác định thời hạn
-                      </Select.Option>
-                      <Select.Option value="cccd">Học việc</Select.Option>
-                      <Select.Option value="cccd">
+                      </Option>
+                      <Option value="cccd">Học việc</Option>
+                      <Option value="cccd">
                         Hợp đồng mùa vụ
-                      </Select.Option>
-                      <Select.Option value="cccd">
+                      </Option>
+                      <Option value="cccd">
                         Hợp đồng dịch vụ
-                      </Select.Option>
+                      </Option>
                     </Select>
                   </Form.Item>
 
