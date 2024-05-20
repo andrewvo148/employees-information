@@ -63,8 +63,8 @@ export async function DELETE(request: NextRequest ) {
 }
 
 export async function GET(request: NextRequest) {
-  const employees = await prisma.employee.findMany();
-  const total = await prisma.employee.count();
-  return NextResponse.json({ total, employees });
+  const contracts = await prisma.contract.findMany();
+  const total = await prisma.contract.count();
+  return NextResponse.json({ total, contracts });
 }
 

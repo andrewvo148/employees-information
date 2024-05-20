@@ -32,6 +32,7 @@ model Ward {
   districtId String
 }
 
+
 model Department {
   id       Int        @id @default(autoincrement())
   name     String
@@ -41,7 +42,6 @@ model Department {
 model Employee {
   id                    Int       @id @default(autoincrement())
   employeeCode          String?   
-  contractType          String?
   employeeStatus        String?
   firstName             String?
   lastName              String?
@@ -54,7 +54,7 @@ model Employee {
   identifyNumberIssuedPlace String?
 
 
-  salaryProbationary    Int?
+  salaryProbationary     Int?
   salaryBasic           Int?
   salarySocialInsurance Int?
   receiveDate           DateTime?
@@ -69,27 +69,102 @@ model Employee {
   bankAccountNo String?
   bankName String?
 
-
-
   department     Department? @relation(fields: [departmentId], references: [id])
   departmentId   Int?
   departmentName String?
+
+
+  jobPosition     JobPosition? @relation(fields: [jobPositionId], references: [id])
+  jobPositionId   Int?
+  jobPositionName String?
+
+  laborNature LaborNature? @relation(fields: [laborNatureId], references: [id])
+  laborNatureId Int?
+  laborNatureName String?
+
+  contractType ContractType? @relation(fields: [contractTypeId], references: [id])
+  contractTypeId Int?
+  contractTypeName String?
+
+
+  maritalStatus MaritalStatus?
+  identificationType IdentificationType?
+  religion Religion?
+  employeeStatusName EmployeeStatusName?
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+
 }
 
 
-OrganizationUnitName
 
-model laborNature {
+model Contract {
+  id     Int       @id @default(autoincrement())
+  contractNo String?
+  startDate DateTime?
+  endDate DateTime?
+  
+  jobPositionName String?
+  jobPositionID Int?
+  employeeName String?
+  signedDate DateTime?
+ salaryBasic Int?
+ salaryForInsurance Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+
+     
+model LaborNature {
   id Int       @id @default(autoincrement())
   name          String
+    Employee Employee[]
+
 }
 
-model jobPosition {
+model JobPosition {
   id Int       @id @default(autoincrement())
   name          String
+  Employee Employee[]
+
 }
 
-model contractType {
+model ContractType {
+  id Int       @id @default(autoincrement())
+  name          String
+    Employee Employee[]
+
+}
+
+
+model Ethnicity {
    id Int       @id @default(autoincrement())
-  name          String
+    name          String
 }
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+}
+
+enum Religion {
+  NON
+  ISLAMIC
+  BUDDHISM
+  HOAHAO_BUDDHISM
+  CHRISTIAN
+  PROTESTANTISM
+}
+
+enum IdentificationType {
+  CCCD
+  CMND
+}
+
+enum EmployeeStatusName {
+  WORKING
+  RESIGNED
+}
+

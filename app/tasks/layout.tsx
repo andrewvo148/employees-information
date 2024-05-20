@@ -35,6 +35,18 @@ const items2: MenuProps['items'] = [
     label: 'Hợp đồng',
     icon: <FileTextOutlined style={{ color: '#605E5C' }} />, // Icon for Settings
   },
+
+  {
+    key: '/tasks/settings',
+    label: 'Thiết lập',
+    icon: <SettingOutlined style={{ color: '#605E5C' }} />, // Icon for Settings,
+    children: [
+      { key: '9', label: 'Option 9' },
+      { key: '10', label: 'Option 10' },
+      { key: '11', label: 'Option 11' },
+      { key: '12', label: 'Option 12' },
+    ],
+  },
 ];
 
 function TasksLayout({
@@ -93,7 +105,8 @@ function TasksLayout({
                         mode="inline"
                         selectedKeys={[defaultSelectedKey2]}
                         style={{ height: '100%', borderRight: 0 }}
-                        items={items2} 
+                        items={items2}
+                        mode="vertical" 
                         onClick={({key}) => router.push(key)}
                         />
                 </Sider>

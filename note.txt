@@ -549,3 +549,39 @@ null
 PartyJoinPlace
 : 
 null
+
+
+
+
+   {
+                "ContractID": 85054,
+                "ContractStatusID": 1,
+                "ContractNo": "DLM_HD00027",
+                "EmployeeOrganizationID": 40286,
+                "EmployeeStatusID": 1,
+                "OfficeEmail": "nvtrinh@gmail.com",
+                "EmployeeName": "Ngô Việt Trinh",
+                "SyncDocumentID": null,
+                "AttachmentID": null,
+                "AttachmentName": null,
+                "EmployeeID": 143392,
+                "EmployeeCode": "DLM_NVTRINH",
+                "OnBehalfOfEmployerID": null,
+                "OnBehalfOfEmployerName": null,
+                "IsTemplate": 1,
+                "EditVersion": "2024-05-10T11:59:00.000+07:00",
+                "OtherName": null,
+                "SignedDate": "2018-05-16T00:00:00.000+07:00",
+                "JobPositionName": "Nhân viên quản trị nguồn nhân lực",
+                "JobPositionID": 90496,
+                "OrganizationUnitName": "abc",
+                "OrganizationUnitID": 40286,
+                "ContractTypeName": "Hợp đồng không xác định thời hạn",
+                "ContractTypeID": 3,
+                "ContractPeriodName": null,
+                "ContractPeriodID": null,
+                "SalaryBasic": null,
+                "SalaryForInsurance": null,
+                "ContractStatusSignName": null,
+                "ContractStatusSignID": null,
+                "ContractStatusName": "Có hiệu lực"

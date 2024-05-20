@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Segmented, Table, Tabs } from "antd";
 import type { TableColumnsType, TableProps, TabsProps } from "antd";
 import { Col, Divider, Row } from "antd";
-import moment from 'moment';
+import moment from "moment";
 
 import { Card } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
@@ -25,7 +25,8 @@ import {
   Upload,
 } from "antd";
 import Link from "next/link";
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from "next/navigation";
+import dayjs from "dayjs";
 
 const { Option } = Select;
 
@@ -39,14 +40,32 @@ interface DepartmentType {
   name: string;
 }
 
+interface laborNatureType {
+  id: number;
+  name: string;
+}
+
+interface jobPositionType {
+  id: number;
+  name: string;
+}
+
+
+interface ContractTypeType {
+  id: number;
+  name: string;
+}
+
 interface EmployeeType {
   id: number;
-  employeeCode:          String;  
-  contractType:         String;
-  employeeStatus:        String;
-  firstName:             String;
-  lastName:              String;
-  fullName:              String;
+  employeeCode: string;
+  contractType: string;
+  employeeStatus: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  jobPostionId: number;
+  jobPositionName: string;
   // gender                String?
   // hireDate              String?
   // salaryBasic           Int?
@@ -59,23 +78,32 @@ interface EmployeeType {
 
   // bankAccountNo String?
   // bankName String?
-
-
 }
-const dateFormat = 'DD/MM/YYYY';
+const dateFormat = "DD/MM/YYYY";
 function ProfileCreatePage() {
   const router = useRouter();
- const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
-  const employeeId = searchParams.get('id');
+  const employeeId = searchParams.get("id");
 
   const [form] = Form.useForm();
-  const [employee, setEmployee] = useState<EmployeeType>(null)
+  const [emp, setEmp] = useState<EmployeeType>();
   const [provinces, setProvinces] = useState<ProvinceType[]>([]);
   const [departments, setDepartments] = useState<DepartmentType[]>([]);
+  const [departmentName, setDepartmentName] = useState<string>("");
 
+  const [laborNatures, setLaborNatures] = useState<laborNatureType[]>([]);
+  const [laborNatureName, setLaborNatureName] = useState<string>("");
+
+  const [jobPositions, setJobPositions] = useState<jobPositionType[]>([]);
+  const [jobPositionName, setJobPositionName] = useState<string>("");
+
+
+  const [contractTypes, setContractTypes] = useState<ContractTypeType[]>([]);
+  const [contractTypeName, setContractTypeName] = useState<string>("");
+
+  
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
-
 
   const fetchProvinces = () => {
     fetch("/api/provinces")
@@ -97,26 +125,74 @@ function ProfileCreatePage() {
       .catch((error) => console.error("Error fetching departments:", error));
   };
 
+  const fetchLaborNatures = () => {
+    fetch("/api/laborNatures")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setLaborNatures(result.laborNatures);
+      })
+      .catch((error) => console.error("Error fetching laborNatures:", error));
+  };
+
+  const fetchJobPositions = () => {
+    fetch("/api/jobPositions")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setJobPositions(result.jobPositions);
+      })
+      .catch((error) => console.error("Error fetching jobPositions:", error));
+  };
+
+  const fetchContractTypes = () => {
+    fetch("/api/contractTypes")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setContractTypes(result.contractTypes);
+      })
+      .catch((error) => console.error("Error fetching contractTypes:", error));
+  };
+
+  
   const fetchEmployeeById = () => {
     fetch(`/api/employees/${employeeId}`)
-    .then((res) => res.json())
-    .then(({employee}) => {
-      console.log(employee);
-      employee.birthDay = moment(employee.birthDay)
-      console.log(employee)
-      setEmployee(employee);
-     form.setFieldsValue(employee)
-    })
-    .catch((error) => console.error("Error fetching departments:", error));
+      .then((res) => res.json())
+      .then(({ employee }) => {
+        console.log(employee);
+        if (employee.birthDay) {
+          employee.birthDay = dayjs(employee.birthDay);
+        }
 
-  }
+        if (employee.identifyNumberIssuedDate) {
+          employee.identifyNumberIssuedDate = dayjs(
+            employee.identifyNumberIssuedDate
+          );
+        }
+
+        if (employee.identifyNumberExpiredDate) {
+          employee.identifyNumberExpiredDate = dayjs(
+            employee.identifyNumberExpiredDate
+          );
+        }
+
+        if (employee.birthDay) {
+          employee.birthDay = dayjs(employee.birthDay);
+        }
+
+        //console.log(employee)
+        //setEmployee(employee);
+        form.setFieldsValue(employee);
+      })
+      .catch((error) => console.error("Error fetching departments:", error));
+  };
 
   useEffect(() => {
     if (employeeId) {
-        fetchEmployeeById();
+      fetchEmployeeById();
     }
   }, [employeeId]);
-
 
   useEffect(() => {
     fetchProvinces();
@@ -126,36 +202,57 @@ function ProfileCreatePage() {
     fetchDepartments();
   }, []);
 
-  const onFinish = async (values: any) => {
-    console.log('Received values of form: ', values);
-    try {
-        const body = { ...values };
-        await fetch('/api/employees', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        router.push("/tasks/profile")
-       // await Router.push('/drafts');
-      } catch (error) {
-        console.error(error);
-        throw error; // Re-throwing the error
+  useEffect(() => {
+    fetchLaborNatures();
+  }, []);
 
-      }
+  useEffect(() => {
+    fetchJobPositions();
+  }, []);
+
+
+
+  useEffect(() => {
+    fetchContractTypes();
+  }, []);
+
+  
+
+  const onFinish = async (values: any) => {
+    console.log("Received values of form: ", values);
+    try {
+      const emp = { ...values };
+      emp.jobPositionName = jobPositionName;
+      emp.departmentName = departmentName;
+      emp.laborNatureName = laborNatureName;
+      emp.contractTypeName = contractTypeName;
+
+      await fetch("/api/employees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(emp),
+      });
+      router.push("/tasks/profile");
+      // await Router.push('/drafts');
+    } catch (error) {
+      console.error(error);
+      throw error; // Re-throwing the error
+    }
   };
 
-    const onCancle =  () => {
-      //form.resetFields()
-      //onFinish(form.getFieldsValue())
-      setIsModalOpen(true);
+  const onCancle = () => {
+    //form.resetFields()
+    //onFinish(form.getFieldsValue())
+    setIsModalOpen(true);
+  };
 
-     
-    };
+  const firstName = Form.useWatch("firstName", form);
+  const lastName = Form.useWatch("lastName", form);
 
-  const firstName = Form.useWatch('firstName', form);
-  const lastName = Form.useWatch('lastName', form);
-  
-  form.setFieldValue('fullName', ((lastName || '') + ' ' + (firstName || '')).trim());
+  form.setFieldValue(
+    "fullName",
+    ((lastName || "") + " " + (firstName || "")).trim()
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -164,77 +261,121 @@ function ProfileCreatePage() {
 
   const handleOk = () => {
     try {
-      onFinish(form.getFieldsValue())
+      onFinish(form.getFieldsValue());
       //setIsModalOpen(false);
     } catch (error) {
       console.error(error);
     }
-     
   };
 
   const handleBack = () => {
     setIsModalOpen(false);
-    router.push("/tasks/profile")
-  }
+    router.push("/tasks/profile");
+  };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
+  const onJobPositionChange = (value: number) => {
+    console.log(value);
+    let jp = jobPositions.find((jp) => jp.id == value);
+    if (jp) {
+      setJobPositionName(jp.name);
+    }
+  };
+
+  const onDepartmentChange = (value: number) => {
+    console.log(value);
+    let d = departments.find((d) => d.id == value);
+    if (d) {
+      setDepartmentName(d.name);
+    }
+  };
+
+  const onLaborNatureChange = (value: number) => {
+    console.log(value);
+    let laborNature = laborNatures.find(
+      (laborNature) => laborNature.id == value
+    );
+    if (laborNature) {
+      setLaborNatureName(laborNature.name);
+    }
+  };
+
+
+
+  const onContractTypeChange = (value: number) => {
+    console.log(value);
+    let contractType = contractTypes.find(
+      (contractType) => contractType.id == value
+    );
+    if (contractType) {
+      setContractTypeName(contractType.name);
+    }
+  };
+
+  
+
   return (
     <div>
-       <Modal title="Thông báo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
-       
-       footer={[
+      <Modal
+        title="Thông báo"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
           <Button key="back" onClick={handleCancel}>
             Huỷ
           </Button>,
           <Button key="submit" type="primary" onClick={handleBack}>
             Không lưu
           </Button>,
-          <Button
-            key="save"
-            onClick={handleOk}
-          >
+          <Button key="save" onClick={handleOk}>
             Lưu
           </Button>,
-        ]}>
+        ]}
+      >
         <p>Bạn có muốn lưu lại các thông tin vừa nhập không?</p>
       </Modal>
-    <Form
-          form={form}
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 12 }}
-          layout="horizontal"
-          labelAlign="left"
-          labelWrap={true}
-          colon={false}
-          style={{}}
-          initialValues={employee}
-          onFinish={onFinish}
-        >
-          <Form.Item label="employeeId" name="id" noStyle>
-          <Input type="hidden" />
-</Form.Item>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Thêm hồ sơ</h2>
-        <div className="flex space-x-2">
-        <Button className="" onClick={onCancle}
-         style={{ padding: '8px 24px', 
-        height: "auto"}}>Huỷ
-        </Button>
-        <Button 
-          type="primary" htmlType="submit" style={{ padding: '8px 24px', height: "auto"}}>
-          Lưu
-        </Button>
-        </div>
-       
-      </div>
-      <div
-        className="bg-white rounded-md p-6"
-        style={{ maxHeight: "calc(100vh - 130px)", overflowY: "auto" }}
+      <Form
+        form={form}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 12 }}
+        layout="horizontal"
+        labelAlign="left"
+        labelWrap={true}
+        colon={false}
+        style={{}}
+        // initialValues={employee}
+        onFinish={onFinish}
       >
-        
+        <Form.Item label="employeeId" name="id" noStyle>
+          <Input type="hidden" />
+        </Form.Item>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">Thêm hồ sơ</h2>
+          <div className="flex space-x-2">
+            <Button
+              className=""
+              onClick={onCancle}
+              style={{ padding: "8px 24px", height: "auto" }}
+            >
+              Huỷ
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ padding: "8px 24px", height: "auto" }}
+            >
+              Lưu
+            </Button>
+          </div>
+        </div>
+        <div
+          className="bg-white rounded-md p-6"
+          style={{ maxHeight: "calc(100vh - 130px)", overflowY: "auto" }}
+        >
           <div>
             <div>
               <h2 className="text-xl font-semibold mb-3">Thông tin cơ bản</h2>
@@ -244,13 +385,21 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Thông tin chung</h4>
               <Row>
                 <Col span={12}>
-                  <Form.Item  label="Mã nhân viên" name="employeeCode">
+                  <Form.Item label="Mã nhân viên" name="employeeCode">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Họ và đệm" name="lastName" rules={[{ required: true, message: '' }]}>
+                  <Form.Item
+                    label="Họ và đệm"
+                    name="lastName"
+                    rules={[{ required: true, message: "" }]}
+                  >
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Tên" name="firstName" rules={[{ required: true, message: '' }]}>
+                  <Form.Item
+                    label="Tên"
+                    name="firstName"
+                    rules={[{ required: true, message: "" }]}
+                  >
                     <Input />
                   </Form.Item>
                   <Form.Item label="Họ và tên" name="fullName">
@@ -259,8 +408,8 @@ function ProfileCreatePage() {
 
                   <Form.Item label="Giới tính" name="gender">
                     <Select>
-                          <Option value="male">Nam</Option>
-                          <Option value="female">Nữ</Option>
+                      <Option value="male">Nam</Option>
+                      <Option value="female">Nữ</Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="Ngày sinh" name="birthDay">
@@ -269,18 +418,16 @@ function ProfileCreatePage() {
                   <Form.Item label="Nơi sinh" name="birthPlace">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Nguyên quán" >
+                  <Form.Item label="Nguyên quán">
                     <Input />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Tình trạng hôn nhân">
+                  <Form.Item label="Tình trạng hôn nhân" name="maritalStatus">
                     <Select>
-                      <Option value="single">Độc thân</Option>
-                      <Option value="married">
-                        Đã có gia đình
-                      </Option>
-                      <Option value="divorced">Ly dị</Option>
+                      <Option value="SINGLE">Độc thân</Option>
+                      <Option value="MARRIED">Đã có gia đình</Option>
+                      <Option value="DIVORCED">Ly dị</Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="MST cá nhân">
@@ -293,14 +440,14 @@ function ProfileCreatePage() {
                     </Select>
                   </Form.Item>
 
-                  <Form.Item label="Tôn giáo">
+                  <Form.Item label="Tôn giáo" name="religion">
                     <Select>
-                      <Option value="male">Không</Option>
-                      <Option value="female">Hồi giáo</Option>
-                      <Option value="female">Phật giáo</Option>
-                      <Option value="female">
-                        Thiên chúa giáo
-                      </Option>
+                      <Option value="NON">Không</Option>
+                      <Option value="ISLAMIC">Hồi giáo</Option>
+                      <Option value="BUDDHISM">Phật giáo</Option>
+                      <Option value="HOAHAO_BUDDHISM">Phật giáo Hoà Hảo</Option>
+                      <Option value="CHRISTIAN">Thiên chúa giáo</Option>{" "}
+                      <Option value="PROTESTANTISM">Tin lành</Option>
                     </Select>
                   </Form.Item>
 
@@ -313,26 +460,31 @@ function ProfileCreatePage() {
               </Row>
             </div>
 
-
             <div className="p-5">
               <h4 className="font-bold pb-8">CMND/Thẻ căn cước/Hộ chiếu</h4>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Loại giấy tờ">
+                  <Form.Item label="Loại giấy tờ" name="identificationType">
                     <Select>
-                      <Option value="cmnd">CMND</Option>
-                      <Option value="cccd">CCCD</Option>
+                      <Option value="CMND">CMND</Option>
+                      <Option value="CCCD">CCCD</Option>
                     </Select>
                   </Form.Item>
 
                   <Form.Item label="Số CMND/CCCD" name="identifyNumber">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Ngày cấp (CMND/CCCD)" name="identifyNumberIssuedDate">
+                  <Form.Item
+                    label="Ngày cấp (CMND/CCCD)"
+                    name="identifyNumberIssuedDate"
+                  >
                     <DatePicker format={dateFormat} />
                   </Form.Item>
 
-                  <Form.Item label="Nơi cấp (CMND/CCCD)" name="identifyNumberIssuedPlace">
+                  <Form.Item
+                    label="Nơi cấp (CMND/CCCD)"
+                    name="identifyNumberIssuedPlace"
+                  >
                     <Select>
                       {provinces.map((province) => (
                         <Option value={province.id}>
@@ -343,8 +495,11 @@ function ProfileCreatePage() {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label=" Ngày hết hạn CMND/CCCD" name="identifyNumberExpiredDate">
-                    <DatePicker format={dateFormat}/>
+                  <Form.Item
+                    label=" Ngày hết hạn CMND/CCCD"
+                    name="identifyNumberExpiredDate"
+                  >
+                    <DatePicker format={dateFormat} />
                   </Form.Item>
 
                   <Form.Item label="Nơi sinh" name="birthPlace">
@@ -386,10 +541,6 @@ function ProfileCreatePage() {
               </Row>
             </div>
           </div>
-
-
-
-
 
           <div>
             <div>
@@ -436,58 +587,52 @@ function ProfileCreatePage() {
                   <Form.Item label="Đơn vị công tác">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Phòng ban">
-                    <Select>
+                  <Form.Item label="Phòng ban" name="departmentId">
+                    <Select onChange={onDepartmentChange}>
                       {departments.map((department) => (
-                        <Option value={department.id}>
-                          {department.name}
+                        <Option value={department.id}>{department.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item label="Vị trí công việc" name="jobPositionId">
+                    <Select onChange={onJobPositionChange}>
+                      {jobPositions.map((jobPosition) => (
+                        <Option value={jobPosition.id}>
+                          {jobPosition.name}
                         </Option>
                       ))}
                     </Select>
                   </Form.Item>
 
-                  <Form.Item label="Trạng thái lao động">
+                  <Form.Item label="Trạng thái lao động" name="employeeStatusName">
                     <Select>
-                      <Option value="cmnd">Đang làm việc</Option>
-                      <Option value="cccd">Đã nghỉ việc</Option>
+  
+                      <Option value="WORKING">Đang làm việc</Option>
+                      <Option value="RESIGNED">Đã nghỉ việc</Option>
                     </Select>
                   </Form.Item>
 
-                  <Form.Item label="Tính chất lao động">
-                    <Select>
-                      <Option value="cmnd">Thực tập sinh</Option>
-                      <Option value="cccd">Học việc</Option>
-                      <Option value="cccd">Thử việc</Option>
-                      <Option value="cccd">Chính thức</Option>
-                      <Option value="cccd">
-                        Tạm đình chỉ công việc
-                      </Option>
-                      <Option value="cccd">Nghỉ thai sản</Option>
-                      <Option value="cccd">
-                        Đang làm thủ tục nghỉ việc
-                      </Option>
-                      <Option value="cccd">Khác</Option>
+                  <Form.Item label="Tính chất lao động" name="laborNatureId">
+                    <Select onChange={onLaborNatureChange}>
+                      {laborNatures.map((laborNature) => (
+                        <Option value={laborNature.id}>
+                          {laborNature.name}
+                        </Option>
+                      ))}
                     </Select>
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Loại hợp đồng">
-                    <Select>
-                      <Option value="cmnd">Thử việc</Option>
-                      <Option value="cccd">
-                        Hợp đồng xác định thời hạn
-                      </Option>
-                      <Option value="cccd">
-                        Hợp đồng không xác định thời hạn
-                      </Option>
-                      <Option value="cccd">Học việc</Option>
-                      <Option value="cccd">
-                        Hợp đồng mùa vụ
-                      </Option>
-                      <Option value="cccd">
-                        Hợp đồng dịch vụ
-                      </Option>
+                  <Form.Item label="Loại hợp đồng" name="contractTypeId">
+                  <Select onChange={onContractTypeChange}>
+                      {contractTypes.map((contractType) => (
+                        <Option value={contractType.id}>
+                          {contractType.name}
+                        </Option>
+                      ))}
                     </Select>
+              
                   </Form.Item>
 
                   <Form.Item label="Ngày học việc">
@@ -525,8 +670,7 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Thông tin lương</h4>
               <Row>
                 <Col span={12}>
-
-                <Form.Item label="Lương cơ bản" name="salaryProbationary">
+                  <Form.Item label="Lương cơ bản" name="salaryProbationary">
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
 
@@ -543,7 +687,6 @@ function ProfileCreatePage() {
                   </Form.Item>
                 </Col>
 
-
                 <Col span={12}>
                   <Form.Item label="TK ngân hàng" name="bankAccountNo">
                     <Input />
@@ -556,8 +699,7 @@ function ProfileCreatePage() {
               </Row>
             </div>
           </div>
-       
-      </div>
+        </div>
       </Form>
     </div>
   );
