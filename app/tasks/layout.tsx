@@ -102,7 +102,6 @@ function TasksLayout({
             <Layout>
                 <Sider width={200} style={{ background: 'colorPrimary' }}>
                     <Menu
-                        mode="inline"
                         selectedKeys={[defaultSelectedKey2]}
                         style={{ height: '100%', borderRight: 0 }}
                         items={items2}

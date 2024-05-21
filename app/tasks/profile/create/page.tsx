@@ -35,6 +35,17 @@ interface ProvinceType {
   displayName: string;
 }
 
+interface CountryType {
+  id: string;
+  displayName: string;
+}
+
+
+interface DistrictType {
+  id: string;
+  displayName: string; 
+}
+
 interface DepartmentType {
   id: number;
   name: string;
@@ -89,6 +100,11 @@ function ProfileCreatePage() {
   const [form] = Form.useForm();
   const [emp, setEmp] = useState<EmployeeType>();
   const [provinces, setProvinces] = useState<ProvinceType[]>([]);
+  const [countries, setCountries] = useState<CountryType[]>([]);
+  const [districts, setDistricts] = useState<DistrictType[]>([]);
+
+
+
   const [departments, setDepartments] = useState<DepartmentType[]>([]);
   const [departmentName, setDepartmentName] = useState<string>("");
 
@@ -105,6 +121,16 @@ function ProfileCreatePage() {
   
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
 
+  const fetchCountries = () => {
+    fetch("/api/countries")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setCountries(result.countries);
+      })
+      .catch((error) => console.error("Error fetching countries:", error));
+  };
+
   const fetchProvinces = () => {
     fetch("/api/provinces")
       .then((res) => res.json())
@@ -114,6 +140,19 @@ function ProfileCreatePage() {
       })
       .catch((error) => console.error("Error fetching provinces:", error));
   };
+
+
+  const fetchDistricts = () => {
+    fetch("/api/districts")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setDistricts(result.districts);
+      })
+      .catch((error) => console.error("Error fetching districts:", error));
+  };
+
+
 
   const fetchDepartments = () => {
     fetch("/api/departments")
@@ -195,8 +234,17 @@ function ProfileCreatePage() {
   }, [employeeId]);
 
   useEffect(() => {
+    fetchCountries;
+  }, []);
+
+  useEffect(() => {
     fetchProvinces();
   }, []);
+
+  useEffect(() => {
+    fetchDistricts();
+  }, []);
+  
 
   useEffect(() => {
     fetchDepartments();
@@ -571,6 +619,70 @@ function ProfileCreatePage() {
                 </Col>
               </Row>
             </div>
+
+            <div className="p-5">
+              <h4 className="font-bold pb-8">Hộ khẩu thường trú</h4>
+              <Row>
+                <Col span={12}>
+                <Form.Item
+                    label="Quốc gia"
+                    name="currentCountryID"
+                  >
+                    <Select>
+                      {countries.map((country) => (
+                        <Option value={country.id}>
+                          {country.displayName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Tỉnh/Thành phố"
+                    name="currentCountryID"
+                  >
+                    <Select>
+                      {provinces.map((province) => (
+                        <Option value={province.id}>
+                          {province.displayName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+
+                  <Form.Item
+                    label="Quận/Huyện"
+                    name="currentDistrictID"
+                  >
+                    <Select>
+                      {districts.map((district) => (
+                        <Option value={district.id}>
+                          {district.displayName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  
+                  <Form.Item label="ĐT cơ quan" name="officePhone">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label="ĐT nhà riêng" name="homePhone">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Email cơ quan" name="officeEmail">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label="Email cá nhân" name="otherEmail">
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </div>
+
+
           </div>
 
           <div>
