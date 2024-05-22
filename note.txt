@@ -585,3 +585,32 @@ null
                 "ContractStatusSignName": null,
                 "ContractStatusSignID": null,
                 "ContractStatusName": "Có hiệu lực"
+
+
+
+
+
+                currentCountry Country? @relation(name: "currentCountry", fields: [currentCountryID], references: [id])
+currentCountryID Int? 
+currentCountryName String?
+
+currentProvince Province? @relation(name: "currentProvince", fields: [currentProvinceID], references: [id])
+currentProvinceID String?   
+currentProvinceName String?
+
+
+currentDistrict District? @relation(name: "currentDistrict", fields: [currentDistrictID], references: [id])
+currentDistrictID String?
+currentDistrictName String?
+
+
+
+currentWard Ward? @relation(name: "currentWard", fields: [currentWardID], references: [id])
+currentWardID String?
+currentWardName String?
+
+currentStreetHouseNumber  String?
+
+
+contractType ContractType? @relation(fields: [contractTypeId], references: [id])
+  contractTypeId Int?

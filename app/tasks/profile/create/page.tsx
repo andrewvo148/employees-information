@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Modal, Segmented, Table, Tabs } from "antd";
 import type { TableColumnsType, TableProps, TabsProps } from "antd";
 import { Col, Divider, Row } from "antd";
-import moment from "moment";
 
 import { Card } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
@@ -220,6 +219,30 @@ function ProfileCreatePage() {
           employee.birthDay = dayjs(employee.birthDay);
         }
 
+
+        if (employee.probationDate) {
+          employee.probationDate = dayjs(employee.probationDate);
+        }
+
+        if (employee.internalOfficialDate) {
+          employee.internalOfficialDate = dayjs(employee.internalOfficialDate);
+        }
+
+        if (employee.socialInsuranceOfficialDate) {
+          employee.socialInsuranceOfficialDate = dayjs(employee.socialInsuranceOfficialDate);
+        }
+
+
+
+        if (employee.healthInsuranceOfficialDate) {
+          employee.healthInsuranceOfficialDate = dayjs(employee.healthInsuranceOfficialDate);
+        }
+
+        if (employee.hireDate) {
+          employee.hireDate = dayjs(employee.hireDate);
+        }
+
+        
         //console.log(employee)
         //setEmployee(employee);
         form.setFieldsValue(employee);
@@ -244,7 +267,7 @@ function ProfileCreatePage() {
   useEffect(() => {
     fetchDistricts();
   }, []);
-  
+
 
   useEffect(() => {
     fetchDepartments();
@@ -463,10 +486,10 @@ function ProfileCreatePage() {
                   <Form.Item label="Ngày sinh" name="birthDay">
                     <DatePicker format={dateFormat} />
                   </Form.Item>
-                  <Form.Item label="Nơi sinh" name="birthPlace">
+                  <Form.Item label="Tạm trú" name="currentAddress">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Nguyên quán">
+                  <Form.Item label="Thường trú" name="nativeAddress">
                     <Input />
                   </Form.Item>
                 </Col>
@@ -478,14 +501,11 @@ function ProfileCreatePage() {
                       <Option value="DIVORCED">Ly dị</Option>
                     </Select>
                   </Form.Item>
-                  <Form.Item label="MST cá nhân">
+                  <Form.Item label="MST cá nhân" name="pitCode">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Dân tộc">
-                    <Select>
-                      <Option value="male">Kinh</Option>
-                      <Option value="female">Chăm</Option>
-                    </Select>
+                  <Form.Item label="Dân tộc" name="ethnic">
+                      <Input />
                   </Form.Item>
 
                   <Form.Item label="Tôn giáo" name="religion">
@@ -499,10 +519,9 @@ function ProfileCreatePage() {
                     </Select>
                   </Form.Item>
 
-                  <Form.Item label="Quốc tịch">
-                    <Select>
-                      <Option value="vn">Việt nam</Option>
-                    </Select>
+                  <Form.Item label="Quốc tịch" name="nationality">
+                  <Input defaultValue={'Việt Nam'}/>
+
                   </Form.Item>
                 </Col>
               </Row>
@@ -533,13 +552,8 @@ function ProfileCreatePage() {
                     label="Nơi cấp (CMND/CCCD)"
                     name="identifyNumberIssuedPlace"
                   >
-                    <Select>
-                      {provinces.map((province) => (
-                        <Option value={province.id}>
-                          {province.displayName}
-                        </Option>
-                      ))}
-                    </Select>
+                     <Input defaultValue={'Cục cảnh sát QLHC về TTXH'}/>
+
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -550,12 +564,7 @@ function ProfileCreatePage() {
                     <DatePicker format={dateFormat} />
                   </Form.Item>
 
-                  <Form.Item label="Nơi sinh" name="birthPlace">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label="Nguyên quán">
-                    <Input />
-                  </Form.Item>
+
                 </Col>
               </Row>
             </div>
@@ -605,69 +614,7 @@ function ProfileCreatePage() {
                   <Form.Item label="ĐT cơ quan" name="officePhone">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="ĐT nhà riêng" name="homePhone">
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Email cơ quan" name="officeEmail">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label="Email cá nhân" name="otherEmail">
-                    <Input />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </div>
-
-            <div className="p-5">
-              <h4 className="font-bold pb-8">Hộ khẩu thường trú</h4>
-              <Row>
-                <Col span={12}>
-                <Form.Item
-                    label="Quốc gia"
-                    name="currentCountryID"
-                  >
-                    <Select>
-                      {countries.map((country) => (
-                        <Option value={country.id}>
-                          {country.displayName}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Tỉnh/Thành phố"
-                    name="currentCountryID"
-                  >
-                    <Select>
-                      {provinces.map((province) => (
-                        <Option value={province.id}>
-                          {province.displayName}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-
-
-                  <Form.Item
-                    label="Quận/Huyện"
-                    name="currentDistrictID"
-                  >
-                    <Select>
-                      {districts.map((district) => (
-                        <Option value={district.id}>
-                          {district.displayName}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  
-                  <Form.Item label="ĐT cơ quan" name="officePhone">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label="ĐT nhà riêng" name="homePhone">
+                  <Form.Item label="ĐT người thân" name="homePhone">
                     <Input />
                   </Form.Item>
                 </Col>
@@ -736,27 +683,29 @@ function ProfileCreatePage() {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Loại hợp đồng" name="contractTypeId">
-                  <Select onChange={onContractTypeChange}>
-                      {contractTypes.map((contractType) => (
-                        <Option value={contractType.id}>
-                          {contractType.name}
-                        </Option>
-                      ))}
-                    </Select>
-              
+                  <Form.Item label="Loại hợp đồng" name="contractTypeName">
+                  <Input />              
                   </Form.Item>
 
-                  <Form.Item label="Ngày học việc">
-                    <DatePicker />
+
+                  <Form.Item label="Ngày vào làm" name="hireDate">
+                    <DatePicker  format={dateFormat}/>
                   </Form.Item>
 
-                  <Form.Item label="Ngày thử việc">
-                    <DatePicker />
+                  <Form.Item label="Ngày thử việc" name="probationDate">
+                    <DatePicker  format={dateFormat}/>
                   </Form.Item>
 
-                  <Form.Item label="Ngày chính thức">
-                    <DatePicker />
+                  <Form.Item label="Ngày chính thức nội bộ" name="internalOfficialDate">
+                    <DatePicker  format={dateFormat}/>
+                  </Form.Item>
+
+                  <Form.Item label="Ngày chính thức BHXH" name="socialInsuranceOfficialDate">
+                    <DatePicker  format={dateFormat}/>
+                  </Form.Item>
+
+                  <Form.Item label="Ngày chính thức BHYT" name="healthInsuranceOfficialDate">
+                    <DatePicker  format={dateFormat}/>
                   </Form.Item>
                 </Col>
               </Row>
@@ -782,11 +731,12 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Thông tin lương</h4>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Lương cơ bản" name="salaryProbationary">
+
+                  <Form.Item label="Lương thử việc" name="salaryProbationary">
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
 
-                  <Form.Item label="Lương cơ bản" name="salaryBasic">
+                  <Form.Item label="Lương hiệu quả cv" name="salaryProductivity">
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
 
@@ -794,7 +744,7 @@ function ProfileCreatePage() {
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
 
-                  <Form.Item label="Tổng lương">
+                  <Form.Item label="Tổng lương" name="salaryTotal">
                     <InputNumber style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>

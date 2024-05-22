@@ -284,9 +284,8 @@ function ContactPage() {
 
      
           <Button type="primary" size="large" icon={<PlusOutlined />} disabled={!showAddBtn}>
-            <Link href="/tasks/profile/create">
-            <span className="ml-2">Thêm</span>
-
+            <Link href="/tasks/contract/create">
+              <span className="ml-2">Thêm</span>
             </Link>
           </Button>
           <Button type="dashed" size="large" icon={<MinusOutlined />} style={{ padding: '0 20px'}} disabled={showAddBtn} onClick={showModal}>

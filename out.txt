@@ -20,3 +20,26 @@ nativeWardName String?
 nativeStreetHouseNumber  String?
 
 nativeAddress String?
+
+
+
+nativeCountry Country? @relation(name: "nativeCountry", fields: [nativeCountryID], references: [id])
+nativeCountryID Int? 
+nativeCountryName String?
+
+nativeProvince Province? @relation(name: "nativeProvince", fields: [nativeProvinceID], references: [id])
+nativeProvinceID String?   
+nativeProvinceName String?
+
+
+nativeDistrict District? @relation(name: "nativeDistrict", fields: [nativeDistrictID], references: [id])
+nativeDistrictID String?
+nativeDistrictName String?
+
+
+
+nativeWard Ward? @relation(name: "nativeWard", fields: [nativeWardID], references: [id])
+nativeWardID String?  
+nativeWardName String?
+
+nativeStreetHouseNumber  String?

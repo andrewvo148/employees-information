@@ -14,8 +14,6 @@ model Province {
   id          String     @id
   displayName String
   districts   District[]
-  employeesCurrentProvince  Employee[] @relation("currentProvince")
-  employeesNativeProvince   Employee[] @relation("nativeProvince")
   
 }
 
@@ -25,9 +23,6 @@ model District {
   wards       Ward[]
   province    Province @relation(fields: [provinceId], references: [id])
   provinceId  String
-
-   employeesCurrentDistrict  Employee[] @relation("currentDistrict")
-  employeesNativeDistrict   Employee[] @relation("nativeDistrict")
 }
 
 model Ward {
@@ -36,10 +31,6 @@ model Ward {
 
   district   District @relation(fields: [districtId], references: [id])
   districtId String
-
-
-   employeesCurrentWard  Employee[] @relation("currentWard")
-  employeesNativeWard   Employee[] @relation("nativeWard")
 }
 
 
@@ -65,8 +56,9 @@ model Employee {
 
 
   salaryProbationary     Int?
-  salaryBasic           Int?
+  salaryProductivity     Int?
   salarySocialInsurance Int?
+  salaryTotal           Int?
   receiveDate           DateTime?
   mobilePhone           String?
   officePhone           String?
@@ -74,8 +66,22 @@ model Employee {
   officeEmail           String?
   otherEmail            String?
   birthDay              DateTime?
-  birthPlace String?
 
+  pitCode  String?
+
+  ethnic String?
+  nationality  String?
+
+
+probationDate  DateTime?
+                  
+
+internalOfficialDate DateTime?
+                   
+socialInsuranceOfficialDate DateTime?
+
+                  healthInsuranceOfficialDate DateTime?
+                   
   bankAccountNo String?
   bankName String?
 
@@ -92,56 +98,12 @@ model Employee {
   laborNatureId Int?
   laborNatureName String?
 
-  contractType ContractType? @relation(fields: [contractTypeId], references: [id])
-  contractTypeId Int?
   contractTypeName String?
 
 
-currentCountry Country? @relation(name: "currentCountry", fields: [currentCountryID], references: [id])
-currentCountryID Int? 
-currentCountryName String?
 
-currentProvince Province? @relation(name: "currentProvince", fields: [currentProvinceID], references: [id])
-currentProvinceID String?   
-currentProvinceName String?
-
-
-currentDistrict District? @relation(name: "currentDistrict", fields: [currentDistrictID], references: [id])
-currentDistrictID String?
-currentDistrictName String?
-
-
-
-currentWard Ward? @relation(name: "currentWard", fields: [currentWardID], references: [id])
-currentWardID String?
-currentWardName String?
-
-currentStreetHouseNumber  String?
 
 currentAddress String?
-
-
-
-nativeCountry Country? @relation(name: "nativeCountry", fields: [nativeCountryID], references: [id])
-nativeCountryID Int? 
-nativeCountryName String?
-
-nativeProvince Province? @relation(name: "nativeProvince", fields: [nativeProvinceID], references: [id])
-nativeProvinceID String?   
-nativeProvinceName String?
-
-
-nativeDistrict District? @relation(name: "nativeDistrict", fields: [nativeDistrictID], references: [id])
-nativeDistrictID String?
-nativeDistrictName String?
-
-
-
-nativeWard Ward? @relation(name: "nativeWard", fields: [nativeWardID], references: [id])
-nativeWardID String?  
-nativeWardName String?
-
-nativeStreetHouseNumber  String?
 
 nativeAddress String?
 
@@ -176,8 +138,6 @@ model Contract {
 model Country {
   id Int       @id @default(autoincrement())
   name          String
-  employeesCurrent  Employee[] @relation("currentCountry")
-  employeesNative   Employee[] @relation("nativeCountry")
 }
      
 model LaborNature {
@@ -197,7 +157,6 @@ model JobPosition {
 model ContractType {
   id Int       @id @default(autoincrement())
   name          String
-    Employee Employee[]
 
 }
 
@@ -207,6 +166,12 @@ model Ethnicity {
     name          String
 }
 
+
+model Organization {
+  id Int       @id @default(autoincrement())
+  name          String
+  address String
+}
 enum MaritalStatus {
   SINGLE
   MARRIED
