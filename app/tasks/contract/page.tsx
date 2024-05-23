@@ -294,7 +294,7 @@ function ContactPage() {
       </Flex>
   
       </div>
-      <div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
+      {/* <div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
         <Table
           rowSelection={rowSelection}
           scroll={{x: "max-content", y: "calc(100vh - 300px)" }}
@@ -305,7 +305,8 @@ function ContactPage() {
           loading={loading}
           onChange={handleTableChange}
         />
-      </div>
+      </div> */}
+      {/* <Employees></Employees> */}
     </div>
 
 

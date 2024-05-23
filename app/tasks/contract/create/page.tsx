@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Breadcrumb, Modal, Segmented, Table, Tabs } from "antd";
 import type { TableColumnsType, TableProps, TabsProps } from "antd";
 import { Col, Divider, Row } from "antd";
@@ -27,6 +27,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
+import Employees from "../../../../components/employees";
 
 const { Option } = Select;
 
@@ -303,6 +304,25 @@ function ProfileCreatePage() {
     setIsModalOpen(true);
   };
 
+
+
+  const [step, setStep] = useState(1)
+  const onNext = () => {
+    //form.resetFields()
+    //onFinish(form.getFieldsValue())
+    setStep(2)
+    
+  };
+
+  const onPrevious = () => {
+    //form.resetFields()
+    //onFinish(form.getFieldsValue())
+    setStep(1)
+    
+  };
+
+  
+
   const firstName = Form.useWatch("firstName", form);
   const lastName = Form.useWatch("lastName", form);
 
@@ -370,6 +390,30 @@ function ProfileCreatePage() {
     }
   };
 
+  const [data, setData] = useState<DataType[]>();
+  const [loading, setLoading] = useState(false);
+
+
+  const fetchData = () => {
+    setLoading(true);
+    fetch(`/api/employees`)
+      .then((res) => res.json())
+      .then(({ total, employees }) => {
+        setData(employees);
+        setLoading(false);
+      
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [showAddBtn, setShowAddBtn] = useState(true);
+
   return (
     <div>
       <Modal
@@ -396,51 +440,40 @@ function ProfileCreatePage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Thêm hồ sơ</h2>
           <div className="flex space-x-2">
-            <Button
+             <Button
               className=""
-              onClick={onCancle}
+              onClick={onCancle} 
               style={{ padding: "8px 24px", height: "auto" }}
             >
               Huỷ
             </Button>
+            { step == 2 &&
             <Button
-              type="primary"
-              htmlType="submit"
+              className=""
+              onClick={onPrevious}
               style={{ padding: "8px 24px", height: "auto" }}
             >
-              Lưu
+              Quay lại
+            </Button>
+}
+            <Button
+              type="primary"
+              onClick={onNext}
+              style={{ padding: "8px 24px", height: "auto" }}
+            >
+              Tiếp theo
             </Button>
           </div>
         </div>
-        <Breadcrumb
-          separator=">"
-          items={[
-            {
-              title: "1. Chọn nhân viên"
-            },
-            {
-              title: "2. Khai báo thông tin hợp đồng"
-            }
-          ]}
-        />
+        
+          <span className={step == 1 ? 'text-[#1777ff]': ''}>1. Chọn nhân viên &gt;</span>
+          <span className={step == 2 ? 'text-[#1777ff]': ''}> 2. Khai báo thông tin hợp đồng</span>
+    
 
-
-<div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
-        <Table
-          rowSelection={rowSelection}
-          scroll={{x: "max-content", y: "calc(100vh - 300px)" }}
-          columns={columns}
-             rowKey={(record) => record.id}
-          dataSource={data}
-          pagination={tableParams.pagination}
-          loading={loading}
-          onChange={handleTableChange}
-        />
-      </div>
-
-      
-
-
+        { step == 1 &&
+        <Employees data={data} loading={loading}></Employees>
+        }
+        { step == 2 &&
         <Form
           form={form}
           labelCol={{ span: 8 }}
@@ -457,9 +490,12 @@ function ProfileCreatePage() {
             <Input type="hidden" />
           </Form.Item>
 
+          <div>
+
+          </div>
           <div
             className="bg-white rounded-md p-6"
-            style={{ maxHeight: "calc(100vh - 130px)", overflowY: "auto" }}
+            style={{ maxHeight: "calc(100vh - 160px)", overflowY: "auto" }}
           >
             <div>
               <div>
@@ -792,6 +828,7 @@ function ProfileCreatePage() {
             </div>
           </div>
         </Form>
+}
       </div>
     </div>
   );

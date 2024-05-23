@@ -18,6 +18,7 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 import dayjs from 'dayjs';
+import Employees from "../../../components/employees";
 
 type TableRowSelection<T> = TableProps<T>["rowSelection"];
 const dateFormat = 'DD/MM/YYYY';
@@ -298,7 +299,7 @@ function ProfilePage() {
       </Flex>
   
       </div>
-      <div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
+      {/* <div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
         <Table
           rowSelection={rowSelection}
           scroll={{x: "max-content", y: "calc(100vh - 300px)" }}
@@ -309,7 +310,8 @@ function ProfilePage() {
           loading={loading}
           onChange={handleTableChange}
         />
-      </div>
+      </div> */}
+      <Employees data={data} loading={loading} startRange={0} endRange={8}></Employees>
     </div>
 
 
