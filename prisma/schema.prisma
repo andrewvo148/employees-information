@@ -80,7 +80,7 @@ internalOfficialDate DateTime?
                    
 socialInsuranceOfficialDate DateTime?
 
-                  healthInsuranceOfficialDate DateTime?
+  healthInsuranceOfficialDate DateTime?
                    
   bankAccountNo String?
   bankName String?
@@ -120,17 +120,17 @@ nativeAddress String?
 
 
 model Contract {
-  id     Int       @id @default(autoincrement())
+  id     Int      @id @default(autoincrement())
   contractNo String?
   startDate DateTime?
   endDate DateTime?
-  
   jobPositionName String?
   jobPositionID Int?
   employeeName String?
   signedDate DateTime?
- salaryBasic Int?
- salaryForInsurance Int?
+  salaryBasic Int?
+  salaryForInsurance Int?
+  signStatus SignStatus?
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
 }
@@ -197,5 +197,8 @@ enum EmployeeStatusName {
   RESIGNED
 }
 
-
+enum SignStatus {
+  NON
+  SIGNED
+}
 

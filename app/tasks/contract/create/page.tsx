@@ -1,13 +1,12 @@
 "use client";
 
 import React, { use, useEffect, useState } from "react";
-import { Breadcrumb, Modal, Segmented, Table, Tabs } from "antd";
+import { Avatar, Breadcrumb, Card, Flex, Modal, Segmented, Table, Tabs } from "antd";
 import type { TableColumnsType, TableProps, TabsProps } from "antd";
 import { Col, Divider, Row } from "antd";
-import moment from "moment";
+import _ from 'lodash';
 
-import { Card } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EllipsisOutlined, PlusOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Button,
   Cascader,
@@ -28,6 +27,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
 import Employees from "../../../../components/employees";
+import Meta from "antd/es/card/Meta";
 
 const { Option } = Select;
 
@@ -304,24 +304,18 @@ function ProfileCreatePage() {
     setIsModalOpen(true);
   };
 
-
-
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(1);
   const onNext = () => {
     //form.resetFields()
     //onFinish(form.getFieldsValue())
-    setStep(2)
-    
+    setStep(2);
   };
 
   const onPrevious = () => {
     //form.resetFields()
     //onFinish(form.getFieldsValue())
-    setStep(1)
-    
+    setStep(1);
   };
-
-  
 
   const firstName = Form.useWatch("firstName", form);
   const lastName = Form.useWatch("lastName", form);
@@ -393,7 +387,6 @@ function ProfileCreatePage() {
   const [data, setData] = useState<DataType[]>();
   const [loading, setLoading] = useState(false);
 
-
   const fetchData = () => {
     setLoading(true);
     fetch(`/api/employees`)
@@ -401,18 +394,33 @@ function ProfileCreatePage() {
       .then(({ total, employees }) => {
         setData(employees);
         setLoading(false);
-      
       });
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  
-
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedEmployees, setSelectedEmployees] = useState<EmployeeType[]>([]);
+
   const [showAddBtn, setShowAddBtn] = useState(true);
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+
+    const filteredEmployees: EmployeeType[] = _.filter(data, (item: EmployeeType) => _.includes(newSelectedRowKeys, item.id));
+    setSelectedEmployees(filteredEmployees);
+
+    if (newSelectedRowKeys.length > 0) {
+      setShowAddBtn(false);
+    } else {
+      setShowAddBtn(true);
+    }
+  };
+
+  const colorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
+
 
   return (
     <div>
@@ -440,22 +448,22 @@ function ProfileCreatePage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Thêm hồ sơ</h2>
           <div className="flex space-x-2">
-             <Button
+            <Button
               className=""
-              onClick={onCancle} 
+              onClick={onCancle}
               style={{ padding: "8px 24px", height: "auto" }}
             >
               Huỷ
             </Button>
-            { step == 2 &&
-            <Button
-              className=""
-              onClick={onPrevious}
-              style={{ padding: "8px 24px", height: "auto" }}
-            >
-              Quay lại
-            </Button>
-}
+            {step == 2 && (
+              <Button
+                className=""
+                onClick={onPrevious}
+                style={{ padding: "8px 24px", height: "auto" }}
+              >
+                Quay lại
+              </Button>
+            )}
             <Button
               type="primary"
               onClick={onNext}
@@ -465,370 +473,138 @@ function ProfileCreatePage() {
             </Button>
           </div>
         </div>
-        
-          <span className={step == 1 ? 'text-[#1777ff]': ''}>1. Chọn nhân viên &gt;</span>
-          <span className={step == 2 ? 'text-[#1777ff]': ''}> 2. Khai báo thông tin hợp đồng</span>
-    
 
-        { step == 1 &&
-        <Employees data={data} loading={loading}></Employees>
-        }
-        { step == 2 &&
-        <Form
-          form={form}
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 12 }}
-          layout="horizontal"
-          labelAlign="left"
-          labelWrap={true}
-          colon={false}
-          style={{}}
-          // initialValues={employee}
-          onFinish={onFinish}
-        >
-          <Form.Item label="employeeId" name="id" noStyle>
-            <Input type="hidden" />
-          </Form.Item>
+        <span className={step == 1 ? "text-[#1777ff]" : ""}>
+          1. Chọn nhân viên &gt;
+        </span>
+        <span className={step == 2 ? "text-[#1777ff]" : ""}>
+          {" "}
+          2. Khai báo thông tin hợp đồng
+        </span>
 
-          <div>
-
-          </div>
-          <div
-            className="bg-white rounded-md p-6"
-            style={{ maxHeight: "calc(100vh - 160px)", overflowY: "auto" }}
+        {step == 1 && (
+          <Employees
+            data={data}
+            loading={loading}
+            selectedRowKeys={selectedRowKeys}
+            onSelectChange={onSelectChange}
+          ></Employees>
+        )}
+        {step == 2 && (
+          <Form
+            form={form}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 12 }}
+            layout="horizontal"
+            labelAlign="left"
+            labelWrap={true}
+            colon={false}
+            style={{}}
+            // initialValues={employee}
+            onFinish={onFinish}
           >
-            <div>
+            <Form.Item label="employeeId" name="id" noStyle>
+              <Input type="hidden" />
+            </Form.Item>
+
+            <Flex gap="middle">
+              <Card style={{ width: 400 }}>
+              <div className="">
+
+              <Input size="large" placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
+                {selectedEmployees.map((emp) => (
+                      <div className="group/item p-3 flex items-center my-2 hover:bg-slate-100 hover:rounded-md">
+                        <Avatar size={48} style={{ backgroundColor: colorList[emp.id % colorList.length]}}>{emp.fullName.charAt(0)}</Avatar>
+                        <p className="ml-2">{emp.fullName}</p>
+                        <DeleteOutlined className="ml-auto invisible group-hover/item:visible" style={{ color: 'red'}} />
+                      </div>
+                  ))}
+              </div>
+              </Card>
+            <div
+              className="bg-white rounded-md p-6"
+              style={{ maxHeight: "calc(100vh - 160px)", overflowY: "auto" }}
+            >
               <div>
-                <h2 className="text-xl font-semibold mb-3">Thông tin cơ bản</h2>
-              </div>
+          
+                <div className="p-5">
+                  <h4 className="font-bold pb-8">Thông tin chung</h4>
+                  <Row>
+                    <Col span={12}>
+                      <Form.Item label="Số hợp đồng" name="contractNo">
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="Tên hợp đồng"
+                        name="lastName"
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="Thời hạn hợp đồng"
+                        name="firstName"
+                        
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item label="Ngày có hiệu lực" name="startDate">
+                      <DatePicker  format={dateFormat}/>
 
-              <div className="p-5">
-                <h4 className="font-bold pb-8">Thông tin chung</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="Mã nhân viên" name="employeeCode">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      label="Họ và đệm"
-                      name="lastName"
-                      rules={[{ required: true, message: "" }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      label="Tên"
-                      name="firstName"
-                      rules={[{ required: true, message: "" }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Họ và tên" name="fullName">
-                      <Input disabled />
-                    </Form.Item>
+                      </Form.Item>
 
-                    <Form.Item label="Giới tính" name="gender">
-                      <Select>
-                        <Option value="male">Nam</Option>
-                        <Option value="female">Nữ</Option>
-                      </Select>
-                    </Form.Item>
-                    <Form.Item label="Ngày sinh" name="birthDay">
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-                    <Form.Item label="Tạm trú" name="currentAddress">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Thường trú" name="nativeAddress">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Tình trạng hôn nhân" name="maritalStatus">
-                      <Select>
-                        <Option value="SINGLE">Độc thân</Option>
-                        <Option value="MARRIED">Đã có gia đình</Option>
-                        <Option value="DIVORCED">Ly dị</Option>
-                      </Select>
-                    </Form.Item>
-                    <Form.Item label="MST cá nhân" name="pitCode">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Dân tộc" name="ethnic">
-                      <Input />
-                    </Form.Item>
+                      <Form.Item label="Ngày hết hạn" name="endDate">
+                      <DatePicker  format={dateFormat}/>
 
-                    <Form.Item label="Tôn giáo" name="religion">
-                      <Select>
-                        <Option value="NON">Không</Option>
-                        <Option value="ISLAMIC">Hồi giáo</Option>
-                        <Option value="BUDDHISM">Phật giáo</Option>
-                        <Option value="HOAHAO_BUDDHISM">
-                          Phật giáo Hoà Hảo
-                        </Option>
-                        <Option value="CHRISTIAN">Thiên chúa giáo</Option>{" "}
-                        <Option value="PROTESTANTISM">Tin lành</Option>
-                      </Select>
-                    </Form.Item>
+                      </Form.Item>
 
-                    <Form.Item label="Quốc tịch" name="nationality">
-                      <Input defaultValue={"Việt Nam"} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
+                      {/* <Form.Item label="Giới tính" name="gender">
+                        <Select>
+                          <Option value="male">Nam</Option>
+                          <Option value="female">Nữ</Option>
+                        </Select>
+                      </Form.Item> */}
+                      <Form.Item label="Lương cơ bản" name="salaryBasic">
+                        <InputNumber style={{ width: "100%" }}/>
+                      </Form.Item>
+                      <Form.Item label="Lương đóng bảo hiểm" name="salaryForInsurance">
+                        <InputNumber style={{ width: "100%" }}/>
+                      </Form.Item>
 
-              <div className="p-5">
-                <h4 className="font-bold pb-8">CMND/Thẻ căn cước/Hộ chiếu</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="Loại giấy tờ" name="identificationType">
-                      <Select>
-                        <Option value="CMND">CMND</Option>
-                        <Option value="CCCD">CCCD</Option>
-                      </Select>
-                    </Form.Item>
+                           <Form.Item label="Trạng thái ký" name="signStatus">
+                        <Select>
+                          <Option value="NON">Chưa ký</Option>
+                          <Option value="SIGNED">Đã ký</Option>
+                        </Select>
+                      </Form.Item>
+                     
+                    </Col>
+                    <Col span={12}>
+                
+                      <Form.Item label="Ngày ký" name="signedDate">
+                      <DatePicker  format={dateFormat}/>
+                      </Form.Item>
+                      <Form.Item label="Loại hợp đồng" name="ethnic">
+                        <Input />
+                      </Form.Item>
 
-                    <Form.Item label="Số CMND/CCCD" name="identifyNumber">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      label="Ngày cấp (CMND/CCCD)"
-                      name="identifyNumberIssuedDate"
-                    >
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
+        
 
-                    <Form.Item
-                      label="Nơi cấp (CMND/CCCD)"
-                      name="identifyNumberIssuedPlace"
-                    >
-                      <Input defaultValue={"Cục cảnh sát QLHC về TTXH"} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label=" Ngày hết hạn CMND/CCCD"
-                      name="identifyNumberExpiredDate"
-                    >
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
+                      <Form.Item label="Hình thức làm việc" name="nationality">
+                        <Input />
+                      </Form.Item>
 
-              <div className="p-5">
-                <h4 className="font-bold pb-8">Trình độ/bằng cấp</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="Trình độ đào tạo">
-                      <Select>
-                        <Option value="daihoc">Đại học</Option>
-                        <Option value="caodang">Cao đẳng</Option>
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item label="Nơi đào tạo">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Khoa">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Chuyên ngành">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Năm tốt nghiệp">
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
+                      <Form.Item label="Người đại diện công ty ký" name="nationality">
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
               </div>
             </div>
-
-            <div>
-              <div>
-                <h2 className="text-xl font-semibold mb-3">
-                  Thông tin liên hệ
-                </h2>
-              </div>
-
-              <div className="p-5">
-                <h4 className="font-bold pb-8">Số điện thoại/Email/khác</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="ĐT di động" name="mobilePhone">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="ĐT cơ quan" name="officePhone">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="ĐT người thân" name="homePhone">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Email cơ quan" name="officeEmail">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Email cá nhân" name="otherEmail">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
-            </div>
-
-            <div>
-              <div>
-                <h2 className="text-xl font-semibold mb-3">
-                  Thông tin công việc
-                </h2>
-              </div>
-
-              <div className="p-5">
-                <h4 className="font-bold pb-8">Thông tin nhân viên</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="Đơn vị công tác">
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label="Phòng ban" name="departmentId">
-                      <Select onChange={onDepartmentChange}>
-                        {departments.map((department) => (
-                          <Option value={department.id}>
-                            {department.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item label="Vị trí công việc" name="jobPositionId">
-                      <Select onChange={onJobPositionChange}>
-                        {jobPositions.map((jobPosition) => (
-                          <Option value={jobPosition.id}>
-                            {jobPosition.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Trạng thái lao động"
-                      name="employeeStatusName"
-                    >
-                      <Select>
-                        <Option value="WORKING">Đang làm việc</Option>
-                        <Option value="RESIGNED">Đã nghỉ việc</Option>
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item label="Tính chất lao động" name="laborNatureId">
-                      <Select onChange={onLaborNatureChange}>
-                        {laborNatures.map((laborNature) => (
-                          <Option value={laborNature.id}>
-                            {laborNature.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Loại hợp đồng" name="contractTypeName">
-                      <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Ngày vào làm" name="hireDate">
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-
-                    <Form.Item label="Ngày thử việc" name="probationDate">
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Ngày chính thức nội bộ"
-                      name="internalOfficialDate"
-                    >
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Ngày chính thức BHXH"
-                      name="socialInsuranceOfficialDate"
-                    >
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Ngày chính thức BHYT"
-                      name="healthInsuranceOfficialDate"
-                    >
-                      <DatePicker format={dateFormat} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
-
-              <div className="p-5">
-                <h4 className="font-bold pb-8">Thông tin nghỉ việc</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="Lý do nghỉ việc">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Ngày nghỉ việc">
-                      <DatePicker />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
-
-              <div className="p-5">
-                <h4 className="font-bold pb-8">Thông tin lương</h4>
-                <Row>
-                  <Col span={12}>
-                    <Form.Item label="Lương thử việc" name="salaryProbationary">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Lương hiệu quả cv"
-                      name="salaryProductivity"
-                    >
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Lương đóng BH"
-                      name="salarySocialInsurance"
-                    >
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-
-                    <Form.Item label="Tổng lương" name="salaryTotal">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={12}>
-                    <Form.Item label="TK ngân hàng" name="bankAccountNo">
-                      <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Ngân hàng" name="bankName">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
-            </div>
-          </div>
-        </Form>
-}
+            </Flex>
+            
+          </Form>
+        )}
       </div>
     </div>
   );
