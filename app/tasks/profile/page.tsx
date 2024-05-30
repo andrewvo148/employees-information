@@ -44,8 +44,8 @@ const columns: TableColumnsType<DataType> = [
     title: "Mã nhân viên",
     dataIndex: "employeeCode",
     sorter: true,
-    width: '200px',
     fixed: "left",
+    width: 100,
     render: (text, record) => (
       <a href={`/tasks/profile/create/?id=${record.id}`}>{text}</a>
   ),
@@ -54,22 +54,20 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "Họ và tên",
     dataIndex: "fullName",
-    width: '200px',
     sorter: true,
-    fixed: "left"
+    fixed: "left",
+    width: 100,
   },
 
   {
     title: "Giới tính",
     dataIndex: "genderName",
-    width: '200px',
     sorter: true
   },
 
   {
     title: "Ngày sinh",
     dataIndex: "birthDay",
-    width: '200px',
     sorter: true,
     render: (text, record) => (
       moment({text}).format(dateFormat)
@@ -79,14 +77,12 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "ĐT di động",
     dataIndex: "mobilePhone",
-    width: '200px',
     sorter: true,
   },
 
   {
     title: "Email cơ quan",
     dataIndex: "officeEmail",
-    width: '200px',
 
   },
   

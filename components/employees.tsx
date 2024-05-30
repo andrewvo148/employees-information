@@ -12,6 +12,7 @@ import React, { ChangeEvent, useEffect } from "react";
 import { useState } from "react";
 import qs from "qs";
 import dayjs from "dayjs";
+import { debounce } from "lodash";
 
 interface EmployeesProps {
   data: DataType[];
@@ -147,6 +148,9 @@ const Employees = ({
     setTableParams({
       query: e.target.value,
     });
+
+    debounced(e.target.value, 1000);
+
   };
 
   const fetchData = (url: string) => {
@@ -166,6 +170,8 @@ const Employees = ({
       });
   };
 
+  const debounced = React.useCallback(debounce(fetchData, 500), [tableParams.query]);
+
   useEffect(() => {
     fetchData(url);
   }, [
@@ -173,6 +179,8 @@ const Employees = ({
     tableParams.pagination?.pageSize,
     tableParams.query,
   ]);
+
+
 
   return (
     <div className="h-full" style={{ maxHeight: "calc(100vh - 130px)" }}>
