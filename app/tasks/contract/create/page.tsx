@@ -397,9 +397,12 @@ function ProfileCreatePage() {
       });
   };
 
+  
+
   useEffect(() => {
     fetchData();
   }, []);
+
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedEmployees, setSelectedEmployees] = useState<EmployeeType[]>([]);
@@ -507,8 +510,8 @@ function ProfileCreatePage() {
               <Input type="hidden" />
             </Form.Item>
 
-            <Flex gap="middle">
-              <Card style={{ width: 400 }}>
+            <Flex gap="middle" className="bg-white">
+              <Card style={{ width: 400, margin: '0 20px' }}>
               <div className="">
 
               <Input size="large" placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
@@ -522,7 +525,7 @@ function ProfileCreatePage() {
               </div>
               </Card>
             <div
-              className="bg-white rounded-md p-6"
+              className="rounded-md p-6"
               style={{ maxHeight: "calc(100vh - 160px)", overflowY: "auto" }}
             >
               <div>
@@ -531,22 +534,28 @@ function ProfileCreatePage() {
                   <h4 className="font-bold pb-8">Thông tin chung</h4>
                   <Row>
                     <Col span={12}>
-                      <Form.Item label="Số hợp đồng" name="contractNo">
+                      <Form.Item label="Số hợp đồng" name="contractCode">
                         <Input />
                       </Form.Item>
                       <Form.Item
                         label="Tên hợp đồng"
-                        name="lastName"
+                        name="contractName"
                       >
                         <Input />
                       </Form.Item>
-                      <Form.Item
-                        label="Thời hạn hợp đồng"
-                        name="firstName"
-                        
-                      >
-                        <Input />
-                      </Form.Item>
+                    
+
+                      <Form.Item label="Thời hạn hợp đồng" name="contractPeriod">
+                    <Select>
+                      <Option value="ONE_MONTH">1 tháng</Option>
+                      <Option value="TWO_MONTH">2 tháng</Option>
+                      <Option value="THREE_MONTH">3 tháng</Option>
+                      <Option value="SIX_MONTH">6 tháng</Option>
+                      <Option value="ONE_YEAR">1 năm</Option>
+                      <Option value="THREE_YEAR">3 năm</Option>
+                    </Select>
+                  </Form.Item>
+
                       <Form.Item label="Ngày có hiệu lực" name="startDate">
                       <DatePicker  format={dateFormat}/>
 
@@ -557,12 +566,7 @@ function ProfileCreatePage() {
 
                       </Form.Item>
 
-                      {/* <Form.Item label="Giới tính" name="gender">
-                        <Select>
-                          <Option value="male">Nam</Option>
-                          <Option value="female">Nữ</Option>
-                        </Select>
-                      </Form.Item> */}
+             
                       <Form.Item label="Lương cơ bản" name="salaryBasic">
                         <InputNumber style={{ width: "100%" }}/>
                       </Form.Item>
@@ -583,12 +587,16 @@ function ProfileCreatePage() {
                       <Form.Item label="Ngày ký" name="signedDate">
                       <DatePicker  format={dateFormat}/>
                       </Form.Item>
-                      <Form.Item label="Loại hợp đồng" name="ethnic">
-                        <Input />
-                      </Form.Item>
 
-        
-
+                      <Form.Item label="Loại hợp đồng" name="contractTypeId">
+                    <Select onChange={onLaborNatureChange}>
+                      {contractTypes.map((contractType) => (
+                        <Option value={contractType.id}>
+                          {contractType.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
                       <Form.Item label="Hình thức làm việc" name="nationality">
                         <Input />
                       </Form.Item>

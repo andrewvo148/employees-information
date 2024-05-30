@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Flex, Modal, Popover, Table } from "antd";
+import { Button, Flex, Input, message, Modal, Popover, Table, UploadProps } from "antd";
 import type {
   GetProp,
   TableColumnsType,
   TablePaginationConfig,
   TableProps,
 } from "antd";
-import { FileTextOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { FileTextOutlined, ImportOutlined, InboxOutlined, MinusOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import moment from "moment";
 import * as fs from "fs";
@@ -19,6 +19,8 @@ import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 import dayjs from 'dayjs';
 import Employees from "../../../components/employees";
+import Dragger from "antd/es/upload/Dragger";
+import qs from 'qs';
 
 type TableRowSelection<T> = TableProps<T>["rowSelection"];
 const dateFormat = 'DD/MM/YYYY';
@@ -59,12 +61,9 @@ const columns: TableColumnsType<DataType> = [
 
   {
     title: "Giới tính",
-    dataIndex: "gender",
+    dataIndex: "genderName",
     width: '200px',
-    sorter: true,
-    render: (text) => (
-      text === 'male' ? 'Nam' : 'Nữ'
-    )
+    sorter: true
   },
 
   {
@@ -107,6 +106,15 @@ function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
+
+const getParams = (params: TableParams) => ({
+  results: params.pagination?.pageSize,
+  page: params.pagination?.current,
+  ...params,
+});
+
+const url = "/api/employees";
+
 function ProfilePage() {
   const [data, setData] = useState<DataType[]>();
   const [loading, setLoading] = useState(false);
@@ -117,28 +125,7 @@ function ProfilePage() {
     },
   });
 
-  const fetchData = () => {
-    setLoading(true);
-    fetch(`/api/employees`)
-      .then((res) => res.json())
-      .then(({ total, employees }) => {
-        setData(employees);
-        setLoading(false);
-        setTableParams({
-          ...tableParams,
-          pagination: {
-            ...tableParams.pagination,
-            total: total,
-            // 200 is mock data, you should read it from server
-            // total: data.totalCount,
-          },
-        });
-      });
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, [tableParams.pagination?.current, tableParams.pagination?.pageSize]);
   
   const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
@@ -168,44 +155,6 @@ function ProfilePage() {
     
   };
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: 'odd',
-        text: 'Select Odd Row',
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: 'even',
-        text: 'Select Even Row',
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
-  };
-
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -222,7 +171,7 @@ function ProfilePage() {
       });
 
       setIsModalOpen(false);
-      fetchData();
+     // fetchData();
       setSelectedRowKeys([]);
     } catch (error) {
       console.error(error);
@@ -234,7 +183,6 @@ function ProfilePage() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
 
 
   const generateContract = () => {
@@ -269,12 +217,41 @@ function ProfilePage() {
       }
     });
     
-    
+
   
    // saveAs(blob, 'output2.docx');
 
   });
-  }
+  };
+
+  const [open, setOpen] = useState(false);
+  const showModal2 = () => {
+    setOpen(true);
+  };
+
+  const handleCancel2 = () => {
+    setOpen(false);
+  };
+  const props: UploadProps = {
+    name: 'file',
+    multiple: true,
+    action: '/api/upload',
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    onDrop(e) {
+      console.log('Dropped files', e.dataTransfer.files);
+    },
+  };
+  
   return (
     <>
     <div>
@@ -293,25 +270,25 @@ function ProfilePage() {
 
             </Link>
           </Button>
+
+          <Button type="primary" size="large" icon={<ImportOutlined />} onClick={showModal2}
+          disabled={!showAddBtn}>
+            <span className="ml-2">Thêm nhiều</span>
+
+          </Button>
+
           <Button type="dashed" size="large" icon={<MinusOutlined />} style={{ padding: '0 20px'}} disabled={showAddBtn} onClick={showModal}>
               <span className="ml-2">Xoá</span>
             </Button>
       </Flex>
   
       </div>
-      {/* <div className="h-full" style={{maxHeight: "calc(100vh - 130px)"}}>
-        <Table
-          rowSelection={rowSelection}
-          scroll={{x: "max-content", y: "calc(100vh - 300px)" }}
-          columns={columns}
-             rowKey={(record) => record.id}
-          dataSource={data}
-          pagination={tableParams.pagination}
-          loading={loading}
-          onChange={handleTableChange}
-        />
-      </div> */}
-      <Employees data={data} loading={loading} startRange={0} endRange={8}></Employees>
+      
+      <Employees url={url} 
+      loading={loading} 
+      selectedRowKeys={selectedRowKeys}
+      tableParams={tableParams}
+            onSelectChange={onSelectChange}></Employees>
     </div>
 
 
@@ -328,6 +305,32 @@ function ProfilePage() {
           </Button>,
         ]}>
         <p>Bạn có chắc muốn xoá không ?</p>
+      </Modal>
+
+
+      <Modal
+        open={open}
+        title="Nhận diện hồ sơ"
+        onOk={handleOk}
+        onCancel={handleCancel2}
+        footer={[
+          <Button key="back" onClick={handleCancel2}>
+            Huỷ
+          </Button>,
+          <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+            Nhận diện
+          </Button>
+        ]}
+      >
+        <Dragger {...props}>
+    <p className="ant-upload-drag-icon">
+      <InboxOutlined />
+    </p>
+    <p className="ant-upload-text">Kéo và thả tệp vào đây</p>
+    <p className="ant-upload-hint">
+     Chấp nhận file .xlsx
+    </p>
+  </Dragger>
       </Modal>
 </>
 

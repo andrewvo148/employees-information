@@ -14,7 +14,6 @@ model Province {
   id          String     @id
   displayName String
   districts   District[]
-  
 }
 
 model District {
@@ -33,30 +32,27 @@ model Ward {
   districtId String
 }
 
-
 model Department {
   id       Int        @id @default(autoincrement())
-  name     String
-  Employee Employee[]
+  name     String @unique
+  employees Employee[]
 }
 
 model Employee {
-  id                    Int       @id @default(autoincrement())
-  employeeCode          String?   
-  employeeStatus        String?
-  firstName             String?
-  lastName              String?
-  fullName              String?
-  gender                String?
-  hireDate              String?
-  identifyNumber        String?
-  identifyNumberIssuedDate DateTime?
+  id                        Int       @id @default(autoincrement())
+  employeeCode              String?
+  employeeStatus            String?
+  firstName                 String?
+  lastName                  String?
+  fullName                  String?
+  hireDate                  String?
+  identifyNumber            String?
+  identifyNumberIssuedDate  DateTime?
   identifyNumberExpiredDate DateTime?
   identifyNumberIssuedPlace String?
 
-
-  salaryProbationary     Int?
-  salaryProductivity     Int?
+  salaryProbationary    Int?
+  salaryProductivity    Int?
   salarySocialInsurance Int?
   salaryTotal           Int?
   receiveDate           DateTime?
@@ -67,110 +63,115 @@ model Employee {
   otherEmail            String?
   birthDay              DateTime?
 
-  pitCode  String?
+  pitCode String?
 
-  ethnic String?
-  nationality  String?
+  ethnic      String?
+  nationality String?
 
+  probationDate DateTime?
 
-probationDate  DateTime?
-                  
+  internalOfficialDate DateTime?
 
-internalOfficialDate DateTime?
-                   
-socialInsuranceOfficialDate DateTime?
-
+  socialInsuranceOfficialDate DateTime?
   healthInsuranceOfficialDate DateTime?
-                   
-  bankAccountNo String?
-  bankName String?
 
-  department     Department? @relation(fields: [departmentId], references: [id])
-  departmentId   Int?
-  departmentName String?
+  bankAccountNo      String?
+  bankName           String?
 
+  department         Department?         @relation(fields: [departmentId], references: [id])
+  departmentId       Int?
+  departmentName     String?
 
-  jobPosition     JobPosition? @relation(fields: [jobPositionId], references: [id])
-  jobPositionId   Int?
-  jobPositionName String?
-
-  laborNature LaborNature? @relation(fields: [laborNatureId], references: [id])
-  laborNatureId Int?
-  laborNatureName String?
-
-  contractTypeName String?
+  jobPosition        JobPosition?        @relation(fields: [jobPositionId], references: [id])
+  jobPositionId      Int?
+  jobPositionName    String?
 
 
 
+ 
+  gender        Gender?       @relation(fields: [genderId], references: [id])
+  genderId      Int?
+  genderName    String?
 
-currentAddress String?
-
-nativeAddress String?
-
-
-  maritalStatus MaritalStatus?
+  laborNature        LaborNature?        @relation(fields: [laborNatureId], references: [id])
+  laborNatureId      Int?
+  laborNatureName    String?
+  contractTypeName   String?
+  currentAddress     String?
+  nativeAddress      String?
+  maritalStatus      MaritalStatus?
   identificationType IdentificationType?
-  religion Religion?
+  religion           Religion?
   employeeStatusName EmployeeStatusName?
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
-
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime?           @updatedAt
+  ContractType       ContractType?       @relation(fields: [contractTypeId], references: [id])
+  contractTypeId     Int?
 }
 
-
-
 model Contract {
-  id     Int      @id @default(autoincrement())
-  contractNo String?
-  startDate DateTime?
-  endDate DateTime?
-  jobPositionName String?
-  jobPositionID Int?
-  employeeName String?
-  signedDate DateTime?
-  salaryBasic Int?
+  id                 Int       @id @default(autoincrement())
+  contractCode       String?
+  contractName       String?
+  startDate          DateTime?
+  endDate            DateTime?
+  jobPositionName    String?
+  jobPositionID      Int?
+  employeeName       String?
+  signedDate         DateTime?
+  salaryBasic        Int?
   salaryForInsurance Int?
-  signStatus SignStatus?
-  createdAt DateTime @default(now())
+
+  contractPeriod     ContractPeriod?
+  contractPeriodName String?
+
+  contractType     ContractType? @relation(fields: [contractTypeId], references: [id])
+  contractTypeId   Int?
+  contractTypeName String?
+
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }
 
 model Country {
-  id Int       @id @default(autoincrement())
-  name          String
+  id   Int    @id @default(autoincrement())
+  name String
 }
-     
-model LaborNature {
-  id Int       @id @default(autoincrement())
-  name          String
-    Employee Employee[]
 
+model LaborNature {
+  id        Int        @id @default(autoincrement())
+  name      String
+  employees Employee[]
 }
 
 model JobPosition {
-  id Int       @id @default(autoincrement())
-  name          String
-  Employee Employee[]
-
+  id        Int        @id @default(autoincrement())
+  name      String @unique
+  employees Employee[]
 }
 
 model ContractType {
-  id Int       @id @default(autoincrement())
-  name          String
-
+  id        Int        @id @default(autoincrement())
+  name      String
+  employees Employee[]
+  Contract  Contract[]
 }
-
 
 model Ethnicity {
-   id Int       @id @default(autoincrement())
-    name          String
+  id   Int    @id @default(autoincrement())
+  name String
 }
 
-
 model Organization {
-  id Int       @id @default(autoincrement())
-  name          String
+  id      Int    @id @default(autoincrement())
+  name    String
   address String
+}
+
+model Gender {
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  employees Employee[]
 }
 enum MaritalStatus {
   SINGLE
@@ -202,3 +203,11 @@ enum SignStatus {
   SIGNED
 }
 
+enum ContractPeriod {
+  ONE_MONTH
+  TWO_MONTH
+  THREE_MONTH
+  SIX_MONTH
+  ONE_YEAR
+  THREE_YEAR
+}

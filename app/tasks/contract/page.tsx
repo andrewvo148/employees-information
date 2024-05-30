@@ -103,6 +103,9 @@ function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
+
+const url = "/api/employee";
+
 function ContactPage() {
   const [data, setData] = useState<DataType[]>();
   const [loading, setLoading] = useState(false);

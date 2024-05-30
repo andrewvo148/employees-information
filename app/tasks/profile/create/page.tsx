@@ -29,6 +29,10 @@ import dayjs from "dayjs";
 
 const { Option } = Select;
 
+interface BasicType {
+  id: number;
+  name: string;
+}
 interface ProvinceType {
   id: string;
   displayName: string;
@@ -117,6 +121,9 @@ function ProfileCreatePage() {
   const [contractTypes, setContractTypes] = useState<ContractTypeType[]>([]);
   const [contractTypeName, setContractTypeName] = useState<string>("");
 
+  const [genders, setGenders] = useState<BasicType[]>([]);
+  const [genderName, setGenderName] = useState<string>("");
+
   
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
 
@@ -181,6 +188,17 @@ function ProfileCreatePage() {
         setJobPositions(result.jobPositions);
       })
       .catch((error) => console.error("Error fetching jobPositions:", error));
+  };
+
+
+  const fetchGenders = () => {
+    fetch("/api/genders")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setGenders(result.genders);
+      })
+      .catch((error) => console.error("Error fetching genders:", error));
   };
 
   const fetchContractTypes = () => {
@@ -287,6 +305,10 @@ function ProfileCreatePage() {
     fetchContractTypes();
   }, []);
 
+
+  useEffect(() => {
+    fetchGenders();
+  }, []);
   
 
   const onFinish = async (values: any) => {
@@ -375,6 +397,14 @@ function ProfileCreatePage() {
   };
 
 
+  const onGenderChange = (value: number) => {
+    console.log(value);
+    let g = genders.find((g) => g.id == value);
+    if (g) {
+      setGenderName(g.name);
+    }
+  };
+
 
   const onContractTypeChange = (value: number) => {
     console.log(value);
@@ -462,25 +492,26 @@ function ProfileCreatePage() {
                   <Form.Item
                     label="Họ và đệm"
                     name="lastName"
-                    rules={[{ required: true, message: "" }]}
+          
                   >
                     <Input />
                   </Form.Item>
                   <Form.Item
                     label="Tên"
                     name="firstName"
-                    rules={[{ required: true, message: "" }]}
                   >
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Họ và tên" name="fullName">
+                  <Form.Item label="Họ và tên" name="fullName" rules={[{ required: true, message: "" }]}>
                     <Input disabled />
                   </Form.Item>
 
-                  <Form.Item label="Giới tính" name="gender">
-                    <Select>
-                      <Option value="male">Nam</Option>
-                      <Option value="female">Nữ</Option>
+
+                  <Form.Item label="Giới tính" name="genderId">
+                    <Select onChange={onDepartmentChange}>
+                      {genders.map((gender) => (
+                        <Option value={gender.id}>{gender.name}</Option>
+                      ))}
                     </Select>
                   </Form.Item>
                   <Form.Item label="Ngày sinh" name="birthDay">
@@ -666,7 +697,6 @@ function ProfileCreatePage() {
 
                   <Form.Item label="Trạng thái lao động" name="employeeStatusName">
                     <Select>
-  
                       <Option value="WORKING">Đang làm việc</Option>
                       <Option value="RESIGNED">Đã nghỉ việc</Option>
                     </Select>

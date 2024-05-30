@@ -63,7 +63,30 @@ export async function DELETE(request: NextRequest ) {
 }
 
 export async function GET(request: NextRequest) {
-  const employees = await prisma.employee.findMany();
+  const searchParams = request.nextUrl.searchParams
+  console.log(searchParams);
+  const query = searchParams.get('query') || ''
+  const page = Number(searchParams.get('page') || 1)
+
+  const employees = await prisma.employee.findMany({
+   where: {
+    OR: [
+      {
+        fullName: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      {
+        employeeCode: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      }
+    ]
+   }
+  });
+
   const total = await prisma.employee.count();
   return NextResponse.json({ total, employees });
 }
