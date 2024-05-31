@@ -1,6 +1,6 @@
 import fs from 'fs';
 import csvParser from 'csv-parser'
-import prisma from '../lib/prisma';
+import prisma from '../src/lib/prisma';
 
 
 const sleep = (milliseconds: number) => {
