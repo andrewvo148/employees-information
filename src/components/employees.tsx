@@ -13,14 +13,10 @@ import { useState } from "react";
 import qs from "qs";
 import dayjs from "dayjs";
 import { debounce } from "lodash";
+import DataTable from "./ui/DataTable";
 
 interface EmployeesProps {
-  data: DataType[];
   selectedRowKeys: React.Key[];
-  loading: boolean;
-  startRange: number;
-  endRange: number;
-  tableParams: TableParams;
   url: string;
   onSelectChange: (key: React.Key[]) => void;
 }
@@ -31,7 +27,6 @@ const dateFormat = "DD/MM/YYYY";
 interface DataType {
   id: string;
   name: string;
-  age: number;
   address: string;
 }
 
@@ -102,27 +97,19 @@ const columns: TableColumnsType<DataType> = [
 ];
 
 const getParams = (params: TableParams) => ({
-  results: params.pagination?.pageSize,
-  page: params.pagination?.current,
   ...params,
 });
 
 const Employees = ({
-  startRange,
-  endRange,
   selectedRowKeys,
-  url,
   onSelectChange,
 }: EmployeesProps) => {
-  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  // const [params, setParams] = useState(tableParams);
   const [data, setData] = useState<DataType[]>();
-
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
-      pageSize: 10,
+      pageSize: 15,
     },
   });
 
@@ -131,11 +118,8 @@ const Employees = ({
     onChange: onSelectChange,
   };
 
-  const handleTableChange: TableProps["onChange"] = (
-    pagination,
-    filters,
-    sorter
-  ) => {
+   
+  const handleTableChange: TableProps<DataType>["onChange"] = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
       filters,
@@ -143,19 +127,25 @@ const Employees = ({
     });
   };
 
+
   const onSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
     setTableParams({
+      ...tableParams,
       query: e.target.value,
+      pagination: {
+        ...tableParams.pagination,
+        current: 1,
+      }
     });
 
-    debounced(e.target.value, 1000);
+    debouncedFetchData();
 
   };
 
-  const fetchData = (url: string) => {
+  const fetchData = () => {
     setLoading(true);
-    fetch(`${url}?${qs.stringify(getParams(tableParams))}`)
+    fetch(`/api/employees?${qs.stringify(getParams(tableParams))}`)
       .then((res) => res.json())
       .then(({ total, employees }) => {
         setData(employees);
@@ -170,38 +160,25 @@ const Employees = ({
       });
   };
 
-  const debounced = React.useCallback(debounce(fetchData, 500), [tableParams.query]);
+  const debouncedFetchData = debounce(fetchData, 500);
 
   useEffect(() => {
-    fetchData(url);
+    fetchData();
   }, [
-    tableParams.pagination?.current,
-    tableParams.pagination?.pageSize,
-    tableParams.query,
+    tableParams.pagination?.current, tableParams.pagination?.pageSize, tableParams.query,
   ]);
 
 
 
   return (
-    <div className="h-full" style={{ maxHeight: "calc(100vh - 130px)" }}>
-      <Input
-        size="large"
-        onChange={onSearchInputChange}
-        placeholder="Tìm kiếm"
-        prefix={<SearchOutlined />}
-        style={{ width: 300 }}
-      />
-      <Table
-        rowSelection={rowSelection}
-        scroll={{ x: "max-content", y: "calc(100vh - 300px)" }}
-        columns={columns}
-        rowKey={(record) => record.id}
-        dataSource={data}
-        pagination={tableParams.pagination}
-        loading={loading}
-        onChange={handleTableChange}
-      />
-    </div>
+   <DataTable 
+   columns={columns}
+   data={data}
+   tableParams={tableParams.pagination}
+   handleTableChange={handleTableChange}
+   onSearchInputChange={onSearchInputChange}
+   loading={loading}
+   ></DataTable>
   );
 };
 

@@ -26,7 +26,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
-import Employees from "../../../components/employees";
+import Employees from "../../../components/Employees";
 import Meta from "antd/es/card/Meta";
 
 const { Option } = Select;

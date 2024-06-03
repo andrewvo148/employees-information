@@ -80,18 +80,6 @@ interface EmployeeType {
   fullName: string;
   jobPostionId: number;
   jobPositionName: string;
-  // gender                String?
-  // hireDate              String?
-  // salaryBasic           Int?
-  // salarySocialInsurance Int?
-  // receiveDate           DateTime?
-  // mobile                String?
-  // officeEmail           String?
-  // birthDay              DateTime?
-  // birthPlace String?
-
-  // bankAccountNo String?
-  // bankName String?
 }
 const dateFormat = "DD/MM/YYYY";
 function ProfileCreatePage() {
@@ -443,6 +431,7 @@ function ProfileCreatePage() {
         form={form}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 12 }}
+        scrollToFirstError
         layout="horizontal"
         labelAlign="left"
         labelWrap={true}
@@ -463,6 +452,12 @@ function ProfileCreatePage() {
               style={{ padding: "8px 24px", height: "auto" }}
             >
               Huỷ
+            </Button>
+            <Button
+              htmlType="submit"
+              style={{ padding: "8px 24px", height: "auto" }}
+            >
+              Lưu và thêm
             </Button>
             <Button
               type="primary"
@@ -492,6 +487,7 @@ function ProfileCreatePage() {
                   <Form.Item
                     label="Họ và đệm"
                     name="lastName"
+                    rules={[{ required: true, message: "" }]}
           
                   >
                     <Input />
@@ -499,10 +495,11 @@ function ProfileCreatePage() {
                   <Form.Item
                     label="Tên"
                     name="firstName"
+                    rules={[{ required: true, message: "" }]}
                   >
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Họ và tên" name="fullName" rules={[{ required: true, message: "" }]}>
+                  <Form.Item label="Họ và tên" name="fullName">
                     <Input disabled />
                   </Form.Item>
 
@@ -515,7 +512,7 @@ function ProfileCreatePage() {
                     </Select>
                   </Form.Item>
                   <Form.Item label="Ngày sinh" name="birthDay">
-                    <DatePicker format={dateFormat} />
+                    <DatePicker format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
                   <Form.Item label="Tạm trú" name="currentAddress">
                     <Input />
@@ -545,7 +542,7 @@ function ProfileCreatePage() {
                       <Option value="ISLAMIC">Hồi giáo</Option>
                       <Option value="BUDDHISM">Phật giáo</Option>
                       <Option value="HOAHAO_BUDDHISM">Phật giáo Hoà Hảo</Option>
-                      <Option value="CHRISTIAN">Thiên chúa giáo</Option>{" "}
+                      <Option value="CHRISTIAN">Thiên chúa giáo</Option>
                       <Option value="PROTESTANTISM">Tin lành</Option>
                     </Select>
                   </Form.Item>
@@ -576,7 +573,7 @@ function ProfileCreatePage() {
                     label="Ngày cấp (CMND/CCCD)"
                     name="identifyNumberIssuedDate"
                   >
-                    <DatePicker format={dateFormat} />
+                    <DatePicker format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
                   <Form.Item
@@ -592,7 +589,7 @@ function ProfileCreatePage() {
                     label=" Ngày hết hạn CMND/CCCD"
                     name="identifyNumberExpiredDate"
                   >
-                    <DatePicker format={dateFormat} />
+                    <DatePicker format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
 
@@ -674,10 +671,10 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Thông tin nhân viên</h4>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Đơn vị công tác">
+                  <Form.Item label="Đơn vị công tác" rules={[{ required: true, message: "" }]}>
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Phòng ban" name="departmentId">
+                  <Form.Item label="Phòng ban" name="departmentId" rules={[{ required: true, message: "" }]}>
                     <Select onChange={onDepartmentChange}>
                       {departments.map((department) => (
                         <Option value={department.id}>{department.name}</Option>
@@ -719,23 +716,23 @@ function ProfileCreatePage() {
 
 
                   <Form.Item label="Ngày vào làm" name="hireDate">
-                    <DatePicker  format={dateFormat}/>
+                    <DatePicker  format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
                   <Form.Item label="Ngày thử việc" name="probationDate">
-                    <DatePicker  format={dateFormat}/>
+                    <DatePicker  format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
                   <Form.Item label="Ngày chính thức nội bộ" name="internalOfficialDate">
-                    <DatePicker  format={dateFormat}/>
+                    <DatePicker  format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
                   <Form.Item label="Ngày chính thức BHXH" name="socialInsuranceOfficialDate">
-                    <DatePicker  format={dateFormat}/>
+                    <DatePicker  format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
                   <Form.Item label="Ngày chính thức BHYT" name="healthInsuranceOfficialDate">
-                    <DatePicker  format={dateFormat}/>
+                    <DatePicker  format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
                 </Col>
               </Row>
@@ -751,7 +748,7 @@ function ProfileCreatePage() {
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Ngày nghỉ việc">
-                    <DatePicker />
+                    <DatePicker  format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
                 </Col>
               </Row>

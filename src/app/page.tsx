@@ -1,3 +1,6 @@
-export default function Tasks() {
+import { redirect } from "next/navigation";
+
+export default function Index() {
+    redirect('/employee');
 
 }

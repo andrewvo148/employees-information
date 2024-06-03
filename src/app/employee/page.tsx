@@ -18,7 +18,7 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 import dayjs from 'dayjs';
-import Employees from "../../../components/employees";
+import Employees from "../../components/Employees";
 import Dragger from "antd/es/upload/Dragger";
 import qs from 'qs';
 
@@ -45,7 +45,7 @@ const columns: TableColumnsType<DataType> = [
     dataIndex: "employeeCode",
     sorter: true,
     fixed: "left",
-    width: 100,
+    width: '50px',
     render: (text, record) => (
       <a href={`/tasks/profile/create/?id=${record.id}`}>{text}</a>
   ),
@@ -261,7 +261,7 @@ function ProfilePage() {
 
      
           <Button type="primary" size="large" icon={<PlusOutlined />} disabled={!showAddBtn}>
-            <Link href="/tasks/profile/create">
+            <Link href="/employee/create">
             <span className="ml-2">Thêm</span>
 
             </Link>

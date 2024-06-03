@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import qs from 'qs';
+
 import prisma from "../../../lib/prisma";
 export async function POST(request: Request) {
   const body = await request.json();
@@ -63,31 +66,65 @@ export async function DELETE(request: NextRequest ) {
 }
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  console.log(searchParams);
-  const query = searchParams.get('query') || ''
-  const page = Number(searchParams.get('page') || 1)
+  try {
+    const searchParams = request.nextUrl.searchParams
+    const qsParsed = qs.parse(searchParams.toString());
+    console.log(searchParams);
 
-  const employees = await prisma.employee.findMany({
-   where: {
-    OR: [
-      {
-        fullName: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      {
-        employeeCode: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      }
-    ]
-   }
-  });
+    const { limit, page, query } = z
+      .object({
+        limit: z.string(),
+        page: z.string(),
+       // query: z.string(),
+      })
+      .parse({
+        limit: qsParsed.pagination.pageSize,
+        page: qsParsed.pagination.current,
+       // query: qsParsed.query,
+      })
 
-  const total = await prisma.employee.count();
-  return NextResponse.json({ total, employees });
+
+      const employees = await prisma.employee.findMany({
+        // where: {
+        //  OR: [
+        //    {
+        //      fullName: {
+        //        contains: query,
+        //        mode: 'insensitive',
+        //      },
+        //    },
+        //    {
+        //      employeeCode: {
+        //        contains: query,
+        //        mode: 'insensitive',
+        //      },
+        //    }
+        //  ]
+        // },
+        take: parseInt(limit),
+        skip: (parseInt(page) - 1) * parseInt(limit),
+        orderBy: {
+          createdAt: 'desc',
+        }
+       });
+     
+       const total = await prisma.employee.count();
+       console.log(total)
+       return NextResponse.json({ total, employees });
+       
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return new NextResponse('Invalid request data passed', { status: 422 })
+    }
+
+    console.log(error)
+
+    return new Response('Could not fetch more employees', { status: 500 })
+
+  }
+
+
+
+ 
 }
 
