@@ -1,8 +1,8 @@
 'use client';
 
-import { ExportOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
+import { ExportOutlined, FilterOutlined, SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import { Button, Flex, Input, Select, SelectProps, Table, TableColumnsType, TablePaginationConfig, TableProps } from "antd";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 
 
 
@@ -38,6 +38,18 @@ function DataTable<DataType, TableParams>({
     onSearchInputChange,
 } : DataTableProps<DataType>) {
 
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+        setSelectedRowKeys(newSelectedRowKeys);
+      };
+      
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+      };
 
 
     return (
@@ -49,28 +61,29 @@ function DataTable<DataType, TableParams>({
           placeholder="Tìm kiếm"
           prefix={<SearchOutlined />}
           style={{ width: 300 }}
-          onChange={onSearchInputChange}
+          onPressEnter={onSearchInputChange}
         />
             <Flex className="ml-auto space-x-2">
                 
-                <Select
-                        mode="multiple"
-                        allowClear
-                        style={{ width: '300px' }}
-                        placeholder="Tất cả đơn vị"
-                        onChange={handleChange}
-                        options={options}
-                    />
+            <Select
+                    mode="multiple"
+                    allowClear
+                    style={{ width: '300px' }}
+                    placeholder="Tất cả đơn vị"
+                    onChange={handleChange}
+                    options={options}
+                />
                 <Button icon={<FilterOutlined style={{ color: "#595959" }}/>} size="large">
                 </Button>
                 <Button icon={<ExportOutlined style={{ color: "#595959" }} />} size="large">
+                </Button>
+                <Button icon={<SettingOutlined style={{ color: "#595959" }} />} size="large">
                 </Button>
             </Flex>
      
         </Flex>
         <Table
-        
-         // rowSelection={rowSelection}
+          rowSelection={rowSelection}
           scroll={{ x: "max-content", y: "calc(100vh - 300px)" }}
           columns={columns}
           rowKey={(record) => record.id}

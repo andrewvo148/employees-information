@@ -43,7 +43,7 @@ const columns: TableColumnsType<DataType> = [
     title: "Mã nhân viên",
     dataIndex: "employeeCode",
     sorter: true,
-    width: "200px",
+    width: "100px",
     fixed: "left",
     render: (text, record) => (
       <a href={`/tasks/profile/create/?id=${record.id}`}>{text}</a>
@@ -64,14 +64,14 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "Giới tính",
     dataIndex: "genderName",
-    width: "200px",
+    width: "100px",
     sorter: true,
   },
 
   {
     title: "Ngày sinh",
     dataIndex: "birthDay",
-    width: "200px",
+    width: "100px",
     sorter: true,
     render: (text, record) => dayjs(`${record.birthDay}`).format(dateFormat),
   },
@@ -79,18 +79,18 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "ĐT di động",
     dataIndex: "mobilePhone",
-    width: "200px",
+    width: "100px",
     sorter: true,
   },
 
   {
     title: "Email cơ quan",
     dataIndex: "officeEmail",
-    width: "200px",
+    width: "100px",
   },
 
   {
-    title: "vị trí công việc",
+    title: "Vị trí công việc",
     dataIndex: "jobPositionName",
     width: "200px",
   },
@@ -121,6 +121,7 @@ const Employees = ({
    
   const handleTableChange: TableProps<DataType>["onChange"] = (pagination, filters, sorter) => {
     setTableParams({
+      ...tableParams,
       pagination,
       filters,
       ...sorter,
@@ -138,13 +139,11 @@ const Employees = ({
         current: 1,
       }
     });
-
-    debouncedFetchData();
-
   };
 
   const fetchData = () => {
     setLoading(true);
+    console.log(getParams(tableParams));
     fetch(`/api/employees?${qs.stringify(getParams(tableParams))}`)
       .then((res) => res.json())
       .then(({ total, employees }) => {
@@ -159,8 +158,6 @@ const Employees = ({
         });
       });
   };
-
-  const debouncedFetchData = debounce(fetchData, 500);
 
   useEffect(() => {
     fetchData();

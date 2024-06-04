@@ -8,7 +8,6 @@ export async function POST(request: Request) {
   console.log(body);
 
   if (body.id) {
-    // Update employee if ID exists
 
     const { id, jobPositionId, departmentId, laborNatureId, contractTypeId, ...data } = body; // Destructure id from body and store the rest in data
     console.log(data)
@@ -75,42 +74,72 @@ export async function GET(request: NextRequest) {
       .object({
         limit: z.string(),
         page: z.string(),
-       // query: z.string(),
+        query: z.optional(z.string()),
       })
       .parse({
         limit: qsParsed.pagination.pageSize,
         page: qsParsed.pagination.current,
-       // query: qsParsed.query,
+        query: qsParsed.query,
       })
 
+      let employees;
+      let total;
+      if (query) {
+         employees = await prisma.employee.findMany({
+          where: {
+           OR: [
+             {
+               fullName: {
+                 contains: query,
+                 mode: 'insensitive',
+               },
+             },
+             {
+               employeeCode: {
+                 contains: query,
+                 mode: 'insensitive',
+               },
+             }
+           ]
+          },
+          take: parseInt(limit),
+          skip: (parseInt(page) - 1) * parseInt(limit),
+          orderBy: {
+            createdAt: 'desc',
+          }
+         });
 
-      const employees = await prisma.employee.findMany({
-        // where: {
-        //  OR: [
-        //    {
-        //      fullName: {
-        //        contains: query,
-        //        mode: 'insensitive',
-        //      },
-        //    },
-        //    {
-        //      employeeCode: {
-        //        contains: query,
-        //        mode: 'insensitive',
-        //      },
-        //    }
-        //  ]
-        // },
-        take: parseInt(limit),
-        skip: (parseInt(page) - 1) * parseInt(limit),
-        orderBy: {
-          createdAt: 'desc',
-        }
-       });
-     
-       const total = await prisma.employee.count();
-       console.log(total)
-       return NextResponse.json({ total, employees });
+          total = await prisma.employee.count({
+          where: {
+            OR: [
+              {
+                fullName: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                employeeCode: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              }
+            ]
+           },
+         });
+
+      } else {
+        employees = await prisma.employee.findMany({
+          take: parseInt(limit),
+          skip: (parseInt(page) - 1) * parseInt(limit),
+          orderBy: {
+            createdAt: 'desc',
+          }
+         });
+          total = await prisma.employee.count();
+      }
+    
+      return NextResponse.json({ total, employees });
        
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -512,14 +512,14 @@ function ProfileCreatePage() {
                     </Select>
                   </Form.Item>
                   <Form.Item label="Ngày sinh" name="birthDay">
-                    <DatePicker format={dateFormat} style={{ width: '100%'}}/>
+                    <DatePicker format={dateFormat} style={{ width: '100%'}} placeholder={dateFormat} />
                   </Form.Item>
-                  <Form.Item label="Tạm trú" name="currentAddress">
+                  {/* <Form.Item label="Tạm trú" name="currentAddress">
                     <Input />
                   </Form.Item>
                   <Form.Item label="Thường trú" name="nativeAddress">
                     <Input />
-                  </Form.Item>
+                  </Form.Item> */}
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Tình trạng hôn nhân" name="maritalStatus">

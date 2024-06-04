@@ -14,6 +14,8 @@ import "./globals.css";
 
 import theme from "./themeConfig";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import viVN from 'antd/locale/vi_VN';
+import 'dayjs/locale/vi';
 
 const { Header, Content, Sider } = Layout;
 
@@ -77,7 +79,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <body>
         <AntdRegistry>
-          <ConfigProvider theme={theme}>
+          <ConfigProvider theme={theme} locale={viVN}>
             <Layout style={{ height: "100vh" }}>
               <Header
                 style={{
