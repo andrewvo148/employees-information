@@ -313,7 +313,7 @@ function ProfileCreatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(emp),
       });
-      router.push("/tasks/profile");
+      router.push("/employee");
       // await Router.push('/drafts');
     } catch (error) {
       console.error(error);
@@ -351,7 +351,7 @@ function ProfileCreatePage() {
 
   const handleBack = () => {
     setIsModalOpen(false);
-    router.push("/tasks/profile");
+    router.push("/employee");
   };
 
   const handleCancel = () => {
@@ -556,7 +556,7 @@ function ProfileCreatePage() {
             </div>
 
             <div className="p-5">
-              <h4 className="font-bold pb-8">CMND/Thẻ căn cước/Hộ chiếu</h4>
+              <h4 className="font-bold pb-8">CMND/Thẻ căn cước</h4>
               <Row>
                 <Col span={12}>
                   <Form.Item label="Loại giấy tờ" name="identificationType">
@@ -565,7 +565,6 @@ function ProfileCreatePage() {
                       <Option value="CCCD">CCCD</Option>
                     </Select>
                   </Form.Item>
-
                   <Form.Item label="Số CMND/CCCD" name="identifyNumber">
                     <Input />
                   </Form.Item>
@@ -576,15 +575,15 @@ function ProfileCreatePage() {
                     <DatePicker format={dateFormat} style={{ width: '100%'}}/>
                   </Form.Item>
 
-                  <Form.Item
+                
+                </Col>
+                <Col span={12}>
+                <Form.Item
                     label="Nơi cấp (CMND/CCCD)"
                     name="identifyNumberIssuedPlace"
                   >
                      <Input defaultValue={'Cục cảnh sát QLHC về TTXH'}/>
-
                   </Form.Item>
-                </Col>
-                <Col span={12}>
                   <Form.Item
                     label=" Ngày hết hạn CMND/CCCD"
                     name="identifyNumberExpiredDate"
@@ -601,6 +600,10 @@ function ProfileCreatePage() {
               <h4 className="font-bold pb-8">Trình độ/bằng cấp</h4>
               <Row>
                 <Col span={12}>
+
+                <Form.Item label="Trình độ văn hóa">
+                    <Input />
+                  </Form.Item>
                   <Form.Item label="Trình độ đào tạo">
                     <Select>
                       <Option value="daihoc">Đại học</Option>
@@ -620,7 +623,14 @@ function ProfileCreatePage() {
                     <Input />
                   </Form.Item>
                   <Form.Item label="Năm tốt nghiệp">
-                    <InputNumber />
+                    <InputNumber style={{ width: "100%" }}/>
+                  </Form.Item>
+
+                  <Form.Item label="Xếp loại">
+                    <Select>
+                      <Option value="daihoc">Đại học</Option>
+                      <Option value="caodang">Cao đẳng</Option>
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
