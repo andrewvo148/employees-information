@@ -99,9 +99,14 @@ model Employee {
   contractTypeName   String?
   currentAddress     String?
   nativeAddress      String?
-  maritalStatus      MaritalStatus?
+  maritalStatus      MaritalStatus?       @relation(fields: [maritalStatusId], references: [id])
+  maritalStatusId    Int?
+
   identificationType IdentificationType?
-  religion           Religion?
+  
+  religion           Religion?  @relation(fields: [religionId], references: [id])
+  religionId         Int?
+
   employeeStatusName EmployeeStatusName?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime?           @updatedAt
@@ -153,6 +158,7 @@ model JobPosition {
 model ContractType {
   id        Int        @id @default(autoincrement())
   name      String
+  order      Int?
   employees Employee[]
   Contract  Contract[]
 }
@@ -160,6 +166,7 @@ model ContractType {
 model Ethnicity {
   id   Int    @id @default(autoincrement())
   name String
+  order      Int?
 }
 
 model Organization {
@@ -173,19 +180,17 @@ model Gender {
   name    String @unique
   employees Employee[]
 }
-enum MaritalStatus {
-  SINGLE
-  MARRIED
-  DIVORCED
+
+model MaritalStatus {
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  employees Employee[]
 }
 
-enum Religion {
-  NON
-  ISLAMIC
-  BUDDHISM
-  HOAHAO_BUDDHISM
-  CHRISTIAN
-  PROTESTANTISM
+model Religion {
+ id      Int    @id @default(autoincrement())
+ name    String @unique
+ employees Employee[]
 }
 
 enum IdentificationType {
