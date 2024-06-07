@@ -17,10 +17,10 @@ import { IPatch, patchDocument, PatchType, TextRun } from "docx";
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
-import Employees from "../../components/Employees";
 import Dragger from "antd/es/upload/Dragger";
 import qs from 'qs';
 import dayjs from 'dayjs';
+import Employees from "../../components/employees";
 
 type TableRowSelection<T> = TableProps<T>["rowSelection"];
 const dateFormat = 'DD/MM/YYYY';

@@ -11,24 +11,24 @@ datasource db {
 }
 
 model Province {
-  id          String     @id
+  locationID          String     @id
   displayName String
   districts   District[]
 }
 
 model District {
-  id          String   @id
+  locationID          String   @id
   displayName String
   wards       Ward[]
-  province    Province @relation(fields: [provinceId], references: [id])
+  province    Province @relation(fields: [provinceId], references: [locationID])
   provinceId  String
 }
 
 model Ward {
-  id          String @id
+  locationID          String @id
   displayName String
 
-  district   District @relation(fields: [districtId], references: [id])
+  district   District @relation(fields: [districtId], references: [locationID])
   districtId String
 }
 
@@ -89,9 +89,8 @@ model Employee {
 
 
  
-  gender        Gender?       @relation(fields: [genderId], references: [id])
-  genderId      Int?
-  genderName    String?
+  gender        Gender?
+
 
   laborNature        LaborNature?        @relation(fields: [laborNatureId], references: [id])
   laborNatureId      Int?
@@ -175,10 +174,9 @@ model Organization {
   address String
 }
 
-model Gender {
-  id      Int    @id @default(autoincrement())
-  name    String @unique
-  employees Employee[]
+enum Gender {
+  MALE
+  FEMALE
 }
 
 model MaritalStatus {
@@ -215,4 +213,9 @@ enum ContractPeriod {
   SIX_MONTH
   ONE_YEAR
   THREE_YEAR
+}
+
+model Bank {
+id   Int    @id @default(autoincrement())
+  name String
 }

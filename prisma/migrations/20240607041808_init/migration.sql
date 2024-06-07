@@ -12,28 +12,28 @@ CREATE TYPE "ContractPeriod" AS ENUM ('ONE_MONTH', 'TWO_MONTH', 'THREE_MONTH', '
 
 -- CreateTable
 CREATE TABLE "Province" (
-    "id" TEXT NOT NULL,
+    "locationID" TEXT NOT NULL,
     "displayName" TEXT NOT NULL,
 
-    CONSTRAINT "Province_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Province_pkey" PRIMARY KEY ("locationID")
 );
 
 -- CreateTable
 CREATE TABLE "District" (
-    "id" TEXT NOT NULL,
+    "locationID" TEXT NOT NULL,
     "displayName" TEXT NOT NULL,
     "provinceId" TEXT NOT NULL,
 
-    CONSTRAINT "District_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "District_pkey" PRIMARY KEY ("locationID")
 );
 
 -- CreateTable
 CREATE TABLE "Ward" (
-    "id" TEXT NOT NULL,
+    "locationID" TEXT NOT NULL,
     "displayName" TEXT NOT NULL,
     "districtId" TEXT NOT NULL,
 
-    CONSTRAINT "Ward_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Ward_pkey" PRIMARY KEY ("locationID")
 );
 
 -- CreateTable
@@ -213,10 +213,10 @@ CREATE UNIQUE INDEX "MaritalStatus_name_key" ON "MaritalStatus"("name");
 CREATE UNIQUE INDEX "Religion_name_key" ON "Religion"("name");
 
 -- AddForeignKey
-ALTER TABLE "District" ADD CONSTRAINT "District_provinceId_fkey" FOREIGN KEY ("provinceId") REFERENCES "Province"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "District" ADD CONSTRAINT "District_provinceId_fkey" FOREIGN KEY ("provinceId") REFERENCES "Province"("locationID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Ward" ADD CONSTRAINT "Ward_districtId_fkey" FOREIGN KEY ("districtId") REFERENCES "District"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Ward" ADD CONSTRAINT "Ward_districtId_fkey" FOREIGN KEY ("districtId") REFERENCES "District"("locationID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Employee" ADD CONSTRAINT "Employee_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "Department"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -123,5 +123,8 @@ INSERT INTO public."Department" ("name") VALUES
         ('Nhân viên bảo vệ'),
         ('Tài xế');
 
+Độc thân
+Đã có gia đình
+Ly dị
 Cục Cảnh sát ĐKQL cư trú và DLQG về dân cư
 Cục Cảnh sát quản lý hành chính về trật tự xã hội

@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
+import useFetchData from "../../../hooks/useFetchData";
 
 const { Option } = Select;
 
@@ -93,6 +94,10 @@ function ProfileCreatePage() {
   const [provinces, setProvinces] = useState<ProvinceType[]>([]);
   const [countries, setCountries] = useState<CountryType[]>([]);
   const [districts, setDistricts] = useState<DistrictType[]>([]);
+  const { data: maritalStatuses} = useFetchData<BasicType>('MaritalStatus');
+  const { data: religions} = useFetchData<BasicType>('Religion');
+  const { data: ethnicities} = useFetchData<BasicType>('Ethnicity');
+
 
 
 
@@ -114,6 +119,17 @@ function ProfileCreatePage() {
 
   
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
+
+
+  const fetchData = (model: string) => {
+    fetch("/api/data/`${model}`")
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setCountries(result.countries);
+      })
+      .catch((error) => console.error("Error fetching countries:", error));
+  };
 
   const fetchCountries = () => {
     fetch("/api/countries")
@@ -504,11 +520,10 @@ function ProfileCreatePage() {
                   </Form.Item>
 
 
-                  <Form.Item label="Giới tính" name="genderId">
-                    <Select onChange={onDepartmentChange}>
-                      {genders.map((gender) => (
-                        <Option value={gender.id}>{gender.name}</Option>
-                      ))}
+                  <Form.Item label="Giới tính" name="gender">
+                    <Select>
+                    <Option value="MALE">Nam</Option>
+                        <Option value="FEMALE">Nữ</Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="Ngày sinh" name="birthDay">
@@ -522,35 +537,40 @@ function ProfileCreatePage() {
                   </Form.Item> */}
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Tình trạng hôn nhân" name="maritalStatus">
-                    <Select>
-                      <Option value="SINGLE">Độc thân</Option>
-                      <Option value="MARRIED">Đã có gia đình</Option>
-                      <Option value="DIVORCED">Ly dị</Option>
+
+                <Form.Item label="Tình trạng hôn nhân" name="maritalStatus">
+                    <Select onChange={onDepartmentChange}>
+                      {maritalStatuses.map((ms) => (
+                        <Option value={ms.id}>{ms.name}</Option>
+                      ))}
                     </Select>
                   </Form.Item>
+
                   <Form.Item label="MST cá nhân" name="pitCode">
                     <Input />
                   </Form.Item>
-                  <Form.Item label="Dân tộc" name="ethnic">
-                      <Input />
-                  </Form.Item>
 
-                  <Form.Item label="Tôn giáo" name="religion">
-                    <Select>
-                      <Option value="NON">Không</Option>
-                      <Option value="ISLAMIC">Hồi giáo</Option>
-                      <Option value="BUDDHISM">Phật giáo</Option>
-                      <Option value="HOAHAO_BUDDHISM">Phật giáo Hoà Hảo</Option>
-                      <Option value="CHRISTIAN">Thiên chúa giáo</Option>
-                      <Option value="PROTESTANTISM">Tin lành</Option>
+                  <Form.Item label="Dân tộc" name="ethnic">
+                    <Select onChange={onDepartmentChange}>
+                      {ethnicities.map((e) => (
+                        <Option value={e.id}>{e.name}</Option>
+                      ))}
                     </Select>
                   </Form.Item>
 
-                  <Form.Item label="Quốc tịch" name="nationality">
+                  <Form.Item label="Tôn giáo" name="religion">
+                    <Select onChange={onDepartmentChange}>
+                      {religions.map((religion) => (
+                        <Option value={religion.id}>{religion.name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+      
+                  {/* <Form.Item label="Quốc tịch" name="nationality">
                   <Input defaultValue={'Việt Nam'}/>
 
-                  </Form.Item>
+                  </Form.Item> */}
                 </Col>
               </Row>
             </div>
